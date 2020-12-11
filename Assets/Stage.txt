@@ -1,0 +1,40 @@
+Crewmate
+
+1. Find and Open Storage (DONE)
+	- To open crewmate must "hack" lab system on 3 different place 
+2. Bring Box to drop zone
+	- 
+3. Fix antenna on 3 different place
+	- 
+4. Survive	
+	- Crewmate can stop zombie from moving by "do something here"
+
+
+Mastermind
+
+1. Need stop crewmate from escaping
+
+2. Can control target robot 
+
+3. Can open mastermind box (Weapon, etc)
+
+4. Can hack vision
+
+5. Can place trap
+
+
+Zombie
+
+1. Attack crewmate in vision (DONE)
+
+2. Run to Mastermind but dont attack him (DONE)
+
+3. Zombie Controller (DONE)
+
+4. Safe Zone (DONE)
+
+
+Asset
+
+- Antenna
+https://sketchfab.com/3d-models/antena-dfc0e6e423b34c3f923124a1bf6aa1a8

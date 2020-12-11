@@ -101,7 +101,8 @@ public class TypeGame : MonoBehaviour
 
     public void close()
     {
-        this.gameObject.SetActive(false);
+        //this.gameObject.SetActive(false);
+        mgc.endMiniGame();
     }
 
 }
