@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Realtime;
+using Photon.Pun;
 
-public class TypeGame : MonoBehaviour
+public class TypeGame : MonoBehaviourPun
 {
     //public Text wordOutput = null;
 
@@ -26,6 +28,12 @@ public class TypeGame : MonoBehaviour
     [SerializeField] private InputField typeWord;
     [SerializeField] private Text testWord;
 
+    [SerializeField] string code;
+    [SerializeField] int codePos;
+    [SerializeField] GameObject codeText;
+
+    public bool isHacked;
+
     public Slider progressBar;
 
     private string currentType;
@@ -33,11 +41,16 @@ public class TypeGame : MonoBehaviour
 
     void Start()
     {
-        
+        isHacked = false;
     }
 
     private void OnEnable()
     {
+        if (isHacked)
+        {
+            return;
+        }
+
         mgc = mgc_gb.GetComponent<MiniGameController>();
         audioSource = GameObject.FindObjectOfType<AudioSource>();
         currentWord = getWord();
@@ -50,13 +63,22 @@ public class TypeGame : MonoBehaviour
 
     void Update()
     {
+        if (isHacked)
+        {
+            testWord.text = "";
+            return;
+        }
+
+        if (code != null)
+        {
+            codeText.GetComponent<Text>().text = code;
+        }
+
         typeWord.ActivateInputField();
         typeWord.text = typeWord.text.ToUpper();
         currentType = typeWord.text;
 
         currentCheckWord = currentWord.Substring(0, currentType.Length);
-
-        
 
         if(currentType != currentCheckWord)
         {
@@ -82,14 +104,16 @@ public class TypeGame : MonoBehaviour
 
             if(score >= 100f)
             {
-                mgc.endMiniGame();
+                //mgc.endMiniGame();
+                codeText.SetActive(true);
+                isHacked = true;
                 return;
             }
 
             audioSource.PlayOneShot(correctSFX);
         }
 
-        progressBar.value -= 5f * Time.deltaTime;
+        progressBar.value -= 2f * Time.deltaTime;
         score = progressBar.value;
     }
 
@@ -105,4 +129,11 @@ public class TypeGame : MonoBehaviour
         mgc.endMiniGame();
     }
 
+    public void setCode(string _code, int _pos)
+    {
+        code = _code;
+        codePos = _pos;
+    }
+
+    
 }

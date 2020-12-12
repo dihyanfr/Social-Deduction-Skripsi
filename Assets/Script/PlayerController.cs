@@ -66,9 +66,22 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        //Set semua bool
         haveRole = false;
         canMove = true;
-        Debug.Log("CAN MOVE " + canMove);
+        isGrab = false;
+
+        //Set game component
+        gc = FindObjectOfType<GameController>();
+        rb = this.GetComponent<Rigidbody>();
+
+        //Set Camerea
+        viewCamera = Camera.main;
+        
+        //Set HP menjadi 100
+        healthBar.value = 100f;
+        healthPoint = 100f;
+
         if (myPV == null)
         {
             myPV = this.gameObject.GetComponent<PhotonView>();
@@ -77,32 +90,22 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         if (!myPV.IsMine)
         {
             //gun.SetActive(false);
-            Destroy(viewCamera);
+            //Destroy(viewCamera);
             //viewCamera.gameObject.SetActive(false);
             return;
         }
 
-        gc = FindObjectOfType<GameController>();
+        
 
-        inventoryUI[0] = GameObject.Find("Tools 1");
-        inventoryUI[1] = GameObject.Find("Tools 2");
-        inventoryUI[2] = GameObject.Find("Tools 3");
-        inventoryUI[3] = GameObject.Find("Tools 4");
+        //inventoryUI[0] = GameObject.Find("Tools 1");
+        //inventoryUI[1] = GameObject.Find("Tools 2");
+        //inventoryUI[2] = GameObject.Find("Tools 3");
+        //inventoryUI[3] = GameObject.Find("Tools 4");
 
-        selectionUI = GameObject.Find("Selection");
+        //selectionUI = GameObject.Find("Selection");
 
-        gun = GameObject.Find("GunPos");
+        //gun = GameObject.Find("GunPos");
         //bullet = GameObject.Find("Bullet");
-
-        rb = this.GetComponent<Rigidbody>();
-        viewCamera = Camera.main;
-
-        isGrab = false;
-
-        //Set HP menjadi 100
-        healthBar.value = 100f;
-        healthPoint = 100f;
-        canMove = true;
 
         
     }
@@ -110,13 +113,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-
-        if (!photonView.IsMine)
-        {
-            //gun.SetActive(false);
-            viewCamera.gameObject.SetActive(false);
-            return;
-        }
 
         if (!haveRole)
         {
@@ -134,10 +130,17 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             haveRole = true;
         }
 
+        if (!photonView.IsMine)
+        {
+            //viewCamera.gameObject.SetActive(false);
+            return;
+        }
+
+        
+
         if (ratefire > 0f)
         {
             ratefire = ratefire - Time.deltaTime;
-            //Debug.Log("rf" + ratefire);
         }
 
         gunPos = gun.transform.position;
@@ -202,7 +205,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
             if (Input.GetMouseButton(1))
             {
-                Debug.Log("Right Hold");
                 isScope = true;
                 //viewCamera.orthographicSize += Time.deltaTime;
                 //fov
@@ -297,21 +299,13 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Tools"))
         {
             countInventory++;
-
             inventory.Add(other.gameObject);
-
             inventoryUI[countInventory - 1].gameObject.GetComponent<Image>().sprite = other.GetComponent<Tools>().toolsIcon;
-
         }
 
         if (other.CompareTag("Bullet"))
         {
-
-            Debug.Log("HIT");
-
             GetComponent<PhotonView>().RPC("ReduceHealth", RpcTarget.AllBuffered);
-            
-            
         }
     }
 
@@ -321,8 +315,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         {
             return;
         }
-
-        
 
         if (collision.transform.CompareTag("Ground"))
         {
