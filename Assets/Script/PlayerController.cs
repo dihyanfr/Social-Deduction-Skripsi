@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] List<GameObject> inventory = new List<GameObject>();
     [SerializeField] private int maxInventory;
     [SerializeField] GameObject[] inventoryUI;
-    [SerializeField] GameObject selectionUI;
+    [SerializeField] GameObject[] selectionUI;
 
     [SerializeField] private GameObject gun;
     [SerializeField] public GameObject bullet;
@@ -167,39 +167,17 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
             if (Input.GetKey(KeyCode.Alpha1))
             {
-                selectionUI.transform.position = inventoryUI[0].transform.position;
+                //selectionUI.transform.position = inventoryUI[0].transform.position;
                 currentSelected = 0;
             }
             else if (Input.GetKey(KeyCode.Alpha2))
             {
-                selectionUI.transform.position = inventoryUI[1].transform.position;
+                //selectionUI.transform.position = inventoryUI[1].transform.position;
                 currentSelected = 1;
             }
-            else if (Input.GetKey(KeyCode.Alpha3))
-            {
-                selectionUI.transform.position = inventoryUI[2].transform.position;
-                currentSelected = 2;
-            }
-            else if (Input.GetKey(KeyCode.Alpha4))
-            {
-                selectionUI.transform.position = inventoryUI[3].transform.position;
-                currentSelected = 3;
-            }
-
 
             if (Input.GetKey(KeyCode.Q)) //Use Item
             {
-                //if (inventory[currentselected].getcomponent<tools>().ismedkit) //heal if item medkit
-                //{
-                //    debug.log("heal!");
-                //    healthpoint += 100f;
-
-                //    if (healthpoint > 100f)
-                //    {
-                //        healthpoint = 100f;
-                //    }
-                //}
-
                 if (isGrab)
                 {
                     currentGrabObject.GetComponent<Rigidbody>().isKinematic = false;
