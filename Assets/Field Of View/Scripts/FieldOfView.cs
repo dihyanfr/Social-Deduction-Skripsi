@@ -60,6 +60,10 @@ public class FieldOfView : Photon.Pun.MonoBehaviourPun
         }
     }
 
+    public void setRadius(float radius)
+    {
+        viewRadius = radius;
+    }
 
     /// <summary>
     /// Draw the field of view.

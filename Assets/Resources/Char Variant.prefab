@@ -1217,6 +1217,7 @@ MonoBehaviour:
   selectionUI: {fileID: 0}
   gun: {fileID: 5950067611795561557}
   bullet: {fileID: 7116359900541625114, guid: 02c6be86d36390348919a2613d80f4f3, type: 3}
+  fov: {fileID: 8320250384838909782}
   healthPoint: 100
   moveSpeed: 6
   walkSpeed: 3

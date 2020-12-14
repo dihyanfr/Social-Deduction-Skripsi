@@ -106,7 +106,7 @@ public class Zombie : MonoBehaviour
                     {
                         if (target.transform.tag == "Zombie")
                         {
-                            Debug.Log("Thats zombie");
+                            //Debug.Log("Thats zombie");
                            
                         }
                         else

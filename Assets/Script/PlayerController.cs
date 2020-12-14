@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] private GameObject gun;
     [SerializeField] public GameObject bullet;
+
+    [SerializeField] public FieldOfView fov;
+
     private Vector3 gunPos;
     private Quaternion gunRot;
 
@@ -71,10 +74,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         canMove = true;
         isGrab = false;
 
+        
+
         //Set game component
         gc = FindObjectOfType<GameController>();
         rb = this.GetComponent<Rigidbody>();
-
+        fov.setRadius(gc.playerViewRadius);
         //Set Camerea
         viewCamera = Camera.main;
         
@@ -113,6 +118,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
+
+        fov.setRadius(gc.playerViewRadius);
 
         if (!haveRole)
         {

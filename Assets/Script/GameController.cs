@@ -26,6 +26,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private int roomSize;
     [SerializeField] private string[] playerList;
 
+    [SerializeField] public float playerViewRadius = 13f;
+    [SerializeField] public bool visionOnSabotage;
+
     private int totalHaveRole;
     private int totalMasterMind;
     private int totalHelper;
