@@ -32,6 +32,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] public FieldOfView fov;
 
+    [SerializeField] private GameObject mastermindUI;
+    [SerializeField] private GameObject playerUI;
+
     private Vector3 gunPos;
     private Quaternion gunRot;
 
@@ -129,6 +132,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             if (rolesID == 1)
             {
                 isMastermind = true;
+                mastermindUI.SetActive(true);
             }
             else
             {
