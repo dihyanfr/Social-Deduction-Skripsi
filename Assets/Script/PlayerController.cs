@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private bool isMastermind;
     [SerializeField] private bool isHelper;
     [SerializeField] private bool isCrewmate;
-    [SerializeField] private bool haveRole;
+    [SerializeField] private bool haveRole = false;
 
     [SerializeField] private Slider healthBar;
     [SerializeField] private Animator animator;
@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] public FieldOfView fov;
 
+    [SerializeField] private CanvasGroup roleReveal;
+    [SerializeField] private Text roleText;
     [SerializeField] private GameObject mastermindUI;
     [SerializeField] private GameObject playerUI;
 
@@ -70,10 +72,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     bool isScope = false;
 
+    bool isTarget = false;
+
     void Start()
     {
         //Set semua bool
-        haveRole = false;
+        //haveRole = false;
         canMove = true;
         isGrab = false;
 
@@ -93,6 +97,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
         if (myPV == null)
         {
             myPV = this.gameObject.GetComponent<PhotonView>();
+            Debug.Log("nama " + myPV.Owner.NickName);
+            this.gameObject.name = myPV.Owner.NickName;
         }
 
         if (!myPV.IsMine)
@@ -124,6 +130,14 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
         fov.setRadius(gc.playerViewRadius);
 
+        
+
+        if (!photonView.IsMine)
+        {
+            //viewCamera.gameObject.SetActive(false);
+            return;
+        }
+
         if (!haveRole)
         {
             int rolesID = gc.getRoles();
@@ -133,22 +147,20 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             {
                 isMastermind = true;
                 mastermindUI.SetActive(true);
+                haveRole = true;
+                roleText.text = "EVIL MASTERMIND";
+                StartCoroutine(fadeOut(true));
             }
             else
             {
                 isCrewmate = true;
+                haveRole = true;
+                roleText.text = "CREWMATE";
+                StartCoroutine(fadeOut(true));
             }
-            haveRole = true;
+            //PhotonNetwork.Destroy(this.roleReveal.gameObject);
         }
-
-        if (!photonView.IsMine)
-        {
-            //viewCamera.gameObject.SetActive(false);
-            return;
-        }
-
         
-
         if (ratefire > 0f)
         {
             ratefire = ratefire - Time.deltaTime;
@@ -366,6 +378,23 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
+
+    IEnumerator fadeOut(bool fadeaway)
+    {
+        yield return new WaitForSeconds(5);
+
+        if (fadeaway)
+        {
+            for (float i = 3; i >= 0; i -= Time.deltaTime)
+            {
+                roleReveal.alpha -= 0.05f;
+                yield return null;
+            }
+            PhotonNetwork.Destroy(this.roleReveal.gameObject);
+        }
+        yield return null;
+    }
+
     [PunRPC]
 
     private void ShotGun()
@@ -400,6 +429,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(this.gunPos);
             stream.SendNext(this.gunRot);
             stream.SendNext(this.targetPos);
+            stream.SendNext(this.haveRole);
             
         }
         else
@@ -410,6 +440,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             this.gunPos = (Vector3)stream.ReceiveNext();
             this.gunRot = (Quaternion)stream.ReceiveNext();
             this.targetPos = (Vector3)stream.ReceiveNext();
+            this.haveRole = (bool)stream.ReceiveNext();
             
         }
     }

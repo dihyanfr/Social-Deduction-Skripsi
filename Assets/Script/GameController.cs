@@ -67,12 +67,11 @@ public class GameController : MonoBehaviour
     public int getRoles()
     {
         int Ran = Random.Range(0, 2);
-
+        
         if(Ran == 1)
         {
             if(totalMasterMind >= 1)
             {
-                
                 return 0;
             }
             else
