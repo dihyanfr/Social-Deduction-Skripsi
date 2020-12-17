@@ -9,6 +9,7 @@ TagManager:
   - Tools
   - Zombie
   - Interactable
+  - Mines
   layers:
   - Default
   - TransparentFX
