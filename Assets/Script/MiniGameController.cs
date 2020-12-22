@@ -33,15 +33,15 @@ public class MiniGameController : MonoBehaviour
 
     public void startMiniGame()
     {
-        currentInteract.GetComponent<PlayerController>().canMove = false;
+        //currentInteract.GetComponent<PlayerController>().canMove = false;
         minigameCanvas.SetActive(true);
-        audioSource.PlayOneShot(startSFX);
+        //audioSource.PlayOneShot(startSFX);
     }
 
     public void endMiniGame()
     {
-        currentInteract.GetComponent<PlayerController>().canMove = true;
+        //currentInteract.GetComponent<PlayerController>().canMove = true;
         minigameCanvas.SetActive(false);
-        audioSource.PlayOneShot(completeSFX);
+        //audioSource.PlayOneShot(completeSFX);
     }
 }

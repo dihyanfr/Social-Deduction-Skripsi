@@ -16,7 +16,6 @@ public class FollowObject : MonoBehaviour
 
     void Update()
     {
-
         if (target == null)
         {
             target = GameObject.FindGameObjectWithTag("Player");
@@ -25,9 +24,6 @@ public class FollowObject : MonoBehaviour
         {
             this.transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 7f, target.transform.position.z - 5.5f);
         }
-
-        
-
 
     }
 }

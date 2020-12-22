@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 
-public class TypeGame : MonoBehaviourPun
+public class TypeGame : MonoBehaviourPun, IPunObservable
 {
     //public Text wordOutput = null;
 
@@ -48,6 +48,8 @@ public class TypeGame : MonoBehaviourPun
     {
         if (isHacked)
         {
+            testWord.text = "";
+            codeText.SetActive(true);
             return;
         }
 
@@ -63,15 +65,16 @@ public class TypeGame : MonoBehaviourPun
 
     void Update()
     {
-        if (isHacked)
-        {
-            testWord.text = "";
-            return;
-        }
-
         if (code != null)
         {
             codeText.GetComponent<Text>().text = code;
+        }
+
+        if (isHacked)
+        {
+            testWord.text = "";
+            codeText.SetActive(true);
+            return;
         }
 
         typeWord.ActivateInputField();
@@ -80,7 +83,7 @@ public class TypeGame : MonoBehaviourPun
 
         currentCheckWord = currentWord.Substring(0, currentType.Length);
 
-        if(currentType != currentCheckWord)
+        if (currentType != currentCheckWord)
         {
             typeWord.text = string.Empty;
             score -= 5f;
@@ -100,12 +103,13 @@ public class TypeGame : MonoBehaviourPun
             currentWord = getWord();
             correctWord.text = currentWord;
             progressBar.value = score;
-            
 
-            if(score >= 100f)
+
+            if (score >= 100f)
             {
                 //mgc.endMiniGame();
                 codeText.SetActive(true);
+                GetComponent<PhotonView>().RPC("setHacked", RpcTarget.All);
                 isHacked = true;
                 return;
             }
@@ -135,5 +139,23 @@ public class TypeGame : MonoBehaviourPun
         codePos = _pos;
     }
 
-    
+    [PunRPC]
+    public void setHacked()
+    {
+        Debug.Log("HACKED");
+        this.isHacked = true;
+        isHacked = true;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(this.isHacked);
+        }
+        else
+        {
+            this.isHacked = (bool)stream.ReceiveNext();
+        }
+    }
 }

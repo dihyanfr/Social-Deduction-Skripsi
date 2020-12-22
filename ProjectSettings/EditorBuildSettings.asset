@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/WaitingRoom.unity
     guid: b803f6bd41318e7409f2ca20c4ca6c74
-  - enabled: 1
+  - enabled: 0
     path: Assets/Photon/Simple/Example/SimpleDemoScene.unity
     guid: d6b3f36edf205694ea98c973bb66f6d1
+  - enabled: 1
+    path: Assets/Scenes/Testing.unity
+    guid: 34634d5971e725d46af6e05eba4eae96
   m_configObjects: {}

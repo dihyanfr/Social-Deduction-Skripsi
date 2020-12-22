@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -16,7 +17,7 @@ MonoBehaviour:
   logLevel: 1
   _frameCount: 30
   _bufferCorrection: 0
-  _targetBufferSize: 2
+  _targetBufferSize: 3
   _maxBufferSize: 3
   _minBufferSize: 1
   _ticksBeforeGrow: 3
