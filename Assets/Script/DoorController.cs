@@ -11,6 +11,8 @@ public class DoorController : MonoBehaviour
     Vector3 target;
     Vector3 normalPosition;
 
+    bool open = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,17 +23,23 @@ public class DoorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (open)
+        {
+            float step = 2f * Time.deltaTime; // calculate distance to move
+            transform.position = Vector3.MoveTowards(transform.position, target, step);
+        }
+        else
+        {
+            float step = 2f * Time.deltaTime; // calculate distance to move
+            transform.position = Vector3.MoveTowards(transform.position, normalPosition, step);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Player")
         {
-            Debug.Log("Move");
-            float step = 2f * Time.deltaTime; // calculate distance to move
-            transform.position = Vector3.MoveTowards(transform.position, target, step);
-
+            open = true;
         }
     }
 
@@ -39,21 +47,21 @@ public class DoorController : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Debug.Log("Move");
-            float step = 2f * Time.deltaTime; // calculate distance to move
-            transform.position = Vector3.MoveTowards(transform.position, target, step);
-
+            //Debug.Log("Move");
+            //float step = 2f * Time.deltaTime; // calculate distance to move
+            //transform.position = Vector3.MoveTowards(transform.position, target, step);
+            //return;
         }
-
     }
 
     private void OnTriggerExit(Collider other)
     {
-        while(this.transform.position != normalPosition)
-        {
-            float step = 2f * Time.deltaTime; // calculate distance to move
-            transform.position = Vector3.MoveTowards(transform.position, normalPosition, step);
-        }
+        open = false;
+    }
+
+    void moveDoor()
+    {
+        
     }
 
 

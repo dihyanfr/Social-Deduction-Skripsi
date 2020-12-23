@@ -11,9 +11,18 @@ public class MiniGameController : MonoBehaviour
 
     [SerializeField] private GameObject currentInteract;
 
+    [SerializeField] public GameObject objectInteraction;
+    [SerializeField] public Material interactionMaterial;
+    public int indexMaterial;
+    public Material[] tempMaterial;
+    private Material tempMats;
+
+
     void Start()
     {
         audioSource = GameObject.FindObjectOfType<AudioSource>();
+        tempMaterial = objectInteraction.GetComponent<MeshRenderer>().materials;
+        tempMats = tempMaterial[indexMaterial];
     }
 
     // Update is called once per frame
@@ -24,10 +33,39 @@ public class MiniGameController : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
+
+        //objectInteraction.GetComponent<MeshRenderer>().material.color = Color.yellow;
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             currentInteract = collision.gameObject;
             startMiniGame();
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        
+        
+        if (other.tag == "Player")
+        {
+            objectInteraction.GetComponent<MeshRenderer>().material = interactionMaterial;
+            //tempMaterial[indexMaterial] = interactionMaterial;
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentInteract = other.gameObject;
+                startMiniGame();
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            objectInteraction.GetComponent<MeshRenderer>().material = tempMats;
+            //objectInteraction.GetComponent<MeshRenderer>().material = tempMaterial[];
+            tempMaterial[indexMaterial] = tempMats;
         }
     }
 

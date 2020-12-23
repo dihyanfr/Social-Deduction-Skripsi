@@ -43,15 +43,7 @@ public class ZombieController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other)
-        {
-            isSpawnable = false;
-        }
-
-        if (!other)
-        {
-            isSpawnable = true;
-        }
+        isSpawnable = false;
     }
 
     private void OnTriggerExit(Collider other)

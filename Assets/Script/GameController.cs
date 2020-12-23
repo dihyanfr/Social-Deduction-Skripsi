@@ -46,7 +46,7 @@ public class GameController : MonoBehaviour
 
         setHackCode();
 
-        InitiatePlayer();
+        //InitiatePlayer();
 
         roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
         Debug.Log("Player List: " + PhotonNetwork.PlayerList[0]);
@@ -59,10 +59,10 @@ public class GameController : MonoBehaviour
         
     }
 
-    public void InitiatePlayer()
-    {
-        PhotonNetwork.Instantiate(Character.name, SpawnPoint.position, Quaternion.identity);
-    }
+    //public void InitiatePlayer()
+    //{
+    //    PhotonNetwork.Instantiate(Character.name, SpawnPoint.position, Quaternion.identity);
+    //}
 
     public int getRoles()
     {
@@ -87,11 +87,30 @@ public class GameController : MonoBehaviour
     public void setHackCode()
     {
 
-        Debug.Log("SET HACK CODE........");
+        for (int i = 0; i < hackTask.Length; i++)
+        {
+            int rnd = Random.Range(0, hackTask.Length);
+            GameObject tempGO = hackTask[rnd];
+            hackTask[rnd] = hackTask[i];
+            hackTask[i] = tempGO;
+        }
 
+        Debug.Log("SET HACK CODE........");
+        Debug.Log(hackTask[0]);
+
+        for (int i = 0; i < 3; i++)
+        {
+
+        }
         hackTask[0].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
         hackTask[1].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
         hackTask[2].GetComponent<TypeGame>().setCode(code3.ToString(), 3);
+
+        for (int i = 3; i < hackTask.Length; i++)
+        {
+            hackTask[i].GetComponentInParent<MiniGameController>().enabled = false;
+            Destroy(hackTask[i].GetComponentInParent<MiniGameController>());
+        }
 
         doorTask[0].GetComponent<CodeGame>().code = storageCode;
 

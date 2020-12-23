@@ -22,6 +22,8 @@ public class Zombie : MonoBehaviour
     public LayerMask targetMask;
     public LayerMask obstacleMask;
 
+    public Animator am;
+
     public List<Transform> visibleTargets = new List<Transform>();
 
     // Start is called before the first frame update
@@ -30,12 +32,14 @@ public class Zombie : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         StartCoroutine("FindTargetsWithDelay", .2f);
+        am = GetComponent<Animator>();
         
     }
 
     // Update is called once per frame
     void Update()
     {
+        am.SetFloat("speed", agent.speed);
         timer += Time.deltaTime;
 
         if(timer >= wanderTimer)
@@ -52,7 +56,6 @@ public class Zombie : MonoBehaviour
         {
             agent.speed = followSpeed;
             Transform currentTarget = visibleTargets[visibleTargets.Count - 1];
-
             agent.SetDestination(visibleTargets[visibleTargets.Count - 1].transform.position);
         }
 
