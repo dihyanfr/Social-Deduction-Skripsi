@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -36,7 +37,14 @@ public class PlayerMovement : MonoBehaviour
     public MeshRenderer muzzleRenderer;
 
     private int frameIndex;
-    
+
+    public string currentRole;
+    public Role role;
+    public Text roleText;
+    public CanvasGroup roleReveal;
+
+    public Text code;
+    public GameController gc;
 
     private void Awake()
     {
@@ -49,18 +57,36 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pv = GetComponent<PhotonView>();
         inventory = GameObject.Find("Inventory");
-
-
         this.transform.rotation = Quaternion.identity;
+        gc = FindObjectOfType<GameController>();
+
+        
+        GetComponent<PhotonView>().RPC("GetRole", RpcTarget.All);
+        if (!pv.IsMine)
+        {
+            roleReveal.gameObject.SetActive(false);
+            code.gameObject.SetActive(false);
+            return;
+        }
+
+        if (pv.IsMine)
+        {
+            roleReveal.gameObject.SetActive(true);
+            code.gameObject.SetActive(true);
+            GetComponent<PhotonView>().RPC("seeRole", RpcTarget.All);
+        }
+
+        
+        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!pv.IsMine)
-        {
-            return;
-        }
+
+        code.text = gc.code1.ToString() + gc.code2.ToString() + gc.code3.ToString() + " " + gc.task1.ToString() + " " + gc.task2.ToString() + " " + gc.task3.ToString();
+
 
         if (!isSpawn)
         {
@@ -148,6 +174,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    
+
 
     [PunRPC]
     private void ShotGun()
@@ -161,5 +189,37 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log(targetPos);
         rb_bullet.AddForce(gunPos.transform.forward * 200f);
         Destroy(_bullet, 1f);
+    }
+
+
+    [PunRPC]
+    public void GetRole()
+    {
+        role = FindObjectOfType<Role>();
+        currentRole = role.getRole();
+        gameObject.name = role.totalPlayer.ToString();
+    }
+
+    [PunRPC]
+    public void seeRole()
+    {
+        roleText.text = currentRole;
+        StartCoroutine(fadeOut(true));
+    }
+
+    IEnumerator fadeOut(bool fadeaway)
+    {
+        yield return new WaitForSeconds(5);
+
+        if (fadeaway)
+        {
+            for (float i = 3; i >= 0; i -= Time.deltaTime)
+            {
+                roleReveal.alpha -= 0.05f;
+                yield return null;
+            }
+            Destroy(this.roleReveal.gameObject);
+        }
+        yield return null;
     }
 }
