@@ -25,21 +25,51 @@ public class GameController : MonoBehaviour, IPunObservable
     [SerializeField] public int task3;
     private bool isSet = false;
 
+    public bool isRandom = false;
+
     [SerializeField] public GameObject[] doorTask;
 
     [SerializeField] private int roomSize;
     [SerializeField] private string[] playerList;
 
-    [SerializeField] public float playerViewRadius = 13f;
-    [SerializeField] public bool visionOnSabotage;
-
+    
+    //Roles
     private int totalHaveRole;
     private int totalMasterMind;
     private int totalHelper;
 
+    //MemoryTask
+    [Header("Memory Task Settings")]
+    public Text memoryGameText;
+    public int memoryGame;
+
+    //BoxTask
+    [Header("Box Task Settings")]
+    [SerializeField] public GameObject collectionPoint;
+    [SerializeField] public int totalBox;
+    [SerializeField] public Text boxText;
+
+    //Door Sabotage
+    [Header("Door Sabotage Settings")]
+    [SerializeField] public bool isDoorLocked;
+    [SerializeField] public float lockedTime = 10f;
+    float tempLockedTime;
+    [SerializeField] public Image lockedDoor;
+    [SerializeField] public Image lockedDoorBar;
+    [SerializeField] public GameObject[] bigDoor;
+
+    //Vision Sabotage
+    [Header("Vision Sabotage Settings")]
+    [SerializeField] public bool isVisionSabotage;
+    [SerializeField] public GameObject[] lightStage;
+    [SerializeField] public float playerViewRadius = 13f;
+    [SerializeField] public float radiusNormal = 13f;
+    [SerializeField] public float radiusOnSabotage = 1.5f;
 
     private void Start()
     {
+        bigDoor = GameObject.FindGameObjectsWithTag("DoorDetection");
+        lightStage = GameObject.FindGameObjectsWithTag("Light");
 
         code1 = Random.Range(0, 9);
         code2 = Random.Range(0, 9);
@@ -67,15 +97,14 @@ public class GameController : MonoBehaviour, IPunObservable
 
         storageCode = code1.ToString() + code2.ToString() + code3.ToString();
 
-        GetComponentInParent<PhotonView>().RPC("setHackCode", RpcTarget.AllBuffered);
+        //GetComponentInParent<PhotonView>().RPC("setHackCode", RpcTarget.All, code1,code2,code3);
 
         //setHackCode();
 
         //InitiatePlayer();
 
-        roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
-        Debug.Log("Player List: " + PhotonNetwork.PlayerList[0]);
-
+        //roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
+        //Debug.Log("Player List: " + PhotonNetwork.PlayerList[0]);
         
     }
 
@@ -83,8 +112,32 @@ public class GameController : MonoBehaviour, IPunObservable
     {
         if (!isSet)
         {
-            setHackCode();
+            setHackCode(code1, code2, code3);
+            //GetComponentInParent<PhotonView>().RPC("setHackCode", RpcTarget.AllBuffered, code1, code2, code3);
         }
+
+        if (isDoorLocked)
+        {
+            if(tempLockedTime <= lockedTime)
+            {
+                tempLockedTime += Time.deltaTime;
+
+                lockedDoorBar.fillAmount = tempLockedTime / lockedTime;
+                
+                Debug.Log("tempLockedTime = " + tempLockedTime);
+            }
+            else
+            {
+                isDoorLocked = false;
+                tempLockedTime = 0;
+                GetComponent<PhotonView>().RPC("unlockDoor", RpcTarget.AllBuffered);
+            }
+        }
+
+
+
+        memoryGameText.text = memoryGame.ToString();
+        boxText.text = totalBox.ToString();
     }
 
     //public void InitiatePlayer()
@@ -112,10 +165,8 @@ public class GameController : MonoBehaviour, IPunObservable
         return 0;
     }
 
-
-
-
-    public void setHackCode()
+    [PunRPC]
+    public void setHackCode(int c1, int c2,int c3)
     {
         hackTask[task1].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
         hackTask[task2].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
@@ -133,6 +184,22 @@ public class GameController : MonoBehaviour, IPunObservable
         isSet = true;
         //doorTask[0].GetComponent<CodeGame>().code = storageCode;
 
+    }
+
+    [PunRPC]
+    public void taskDone(string type)
+    {
+        if(type == "Memory Game")
+        {
+            memoryGame++;
+        }
+        if (type == "Box")
+        {
+            totalBox++;
+        }
+
+        memoryGameText.text = memoryGame.ToString();
+        boxText.text = totalBox.ToString();
     }
 
     [PunRPC]
@@ -157,6 +224,44 @@ public class GameController : MonoBehaviour, IPunObservable
         }
 
         doorTask[0].GetComponent<CodeGame>().code = storageCode;
+    }
+
+    [PunRPC]
+    public void lockedDoorUI()
+    {
+        lockedDoor.gameObject.SetActive(true);
+        isDoorLocked = true;
+    }
+
+    [PunRPC]
+    public void unlockDoor()
+    {
+        
+        lockedDoor.gameObject.SetActive(false);
+
+        for (int i = 0; i < bigDoor.Length; i++)
+        {
+            Debug.Log(bigDoor[i]);
+            bigDoor[i].GetComponent<PhotonView>().RPC("unlockDoor", RpcTarget.AllBuffered);
+        }
+    }
+
+    public void visionSabotage()
+    {
+        GetComponent<PhotonView>().RPC("reduceVision", RpcTarget.AllBuffered);
+    }
+
+
+    [PunRPC]
+    public void reduceVision()
+    {
+        for(int i = 0; i < lightStage.Length; i++)
+        {
+            lightStage[i].GetComponent<Light>().intensity = 0.1f;
+            lightStage[i].GetComponent<Light>().shadowStrength = 0f;
+        }
+
+        playerViewRadius = radiusOnSabotage;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

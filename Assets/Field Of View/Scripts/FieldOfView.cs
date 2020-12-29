@@ -221,36 +221,49 @@ public class FieldOfView : Photon.Pun.MonoBehaviourPun
 
         /* check normal field of view */
         for (int i = 0; i < targetsInViewRadius.Length; i++) {
-            Transform target = targetsInViewRadius[i].transform;
-            bool isInFOV = false;
 
-            //check if hideable should be hidden or not
-            Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2) {
-                float dstToTarget = Vector3.Distance(transform.position, target.position);
-                if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask)) {
-                    isInFOV = true;
+            if (!targetsInViewRadius[i].isTrigger)
+            {
+                Transform target = targetsInViewRadius[i].transform;
+                bool isInFOV = false;
+
+                //check if hideable should be hidden or not
+                Vector3 dirToTarget = (target.position - transform.position).normalized;
+                if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
+                {
+                    float dstToTarget = Vector3.Distance(transform.position, target.position);
+                    if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
+                    {
+                        isInFOV = true;
+                    }
                 }
-            } else if (hasPeripheralVision) {
-                float dstToTarget = Vector3.Distance(transform.position, target.position);
-                // here we have to check the distance to the target since the peripheral vision may have a different radius than the normal field of view
-                if (dstToTarget < viewRadiusPeripheralVision && !Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask)) {
-                    isInFOV = true;
+                else if (hasPeripheralVision)
+                {
+                    float dstToTarget = Vector3.Distance(transform.position, target.position);
+                    // here we have to check the distance to the target since the peripheral vision may have a different radius than the normal field of view
+                    if (dstToTarget < viewRadiusPeripheralVision && !Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
+                    {
+                        isInFOV = true;
+                    }
+                }
+
+                //apply effect to IHideable
+                IHideable hideable = target.GetComponent<IHideable>();
+                if (hideable != null)
+                {
+                    if (isInFOV)
+                    {
+
+                        target.GetComponent<IHideable>().OnFOVEnter();
+                    }
+                    else
+                    {
+
+                        target.GetComponent<IHideable>().OnFOVLeave();
+                    }
                 }
             }
-
-            //apply effect to IHideable
-            IHideable hideable = target.GetComponent<IHideable>();
-            if (hideable != null) {
-                if (isInFOV) {
-
-                    target.GetComponent<IHideable>().OnFOVEnter();
-                }
-                else {
-                 
-                    target.GetComponent<IHideable>().OnFOVLeave();
-                }
-            }
+            
         }
 
         Physics.autoSyncTransforms = true;

@@ -10,7 +10,6 @@ public class Hideable : MonoBehaviour, IHideable {
         else
         {
             GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
-            GetComponentInChildren<Canvas>().enabled = true;
         }
         
     }
@@ -22,7 +21,6 @@ public class Hideable : MonoBehaviour, IHideable {
         else
         {
             GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
-            GetComponentInChildren<Canvas>().enabled = false;
         }
     }
 }

@@ -10,6 +10,13 @@ TagManager:
   - Zombie
   - Interactable
   - Mines
+  - BigDoor
+  - DoorDetection
+  - Mastermind
+  - Light
+  - Stage
+  - Box
+  - Collection
   layers:
   - Default
   - TransparentFX

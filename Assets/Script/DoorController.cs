@@ -1,37 +1,70 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class DoorController : MonoBehaviour
+public class DoorController : MonoBehaviour, IPunObservable
 {
-
+    public GameObject door;
     public float sphereRadius;
     public float offset;
+
+    public AudioSource audioSource;
+    public AudioClip doorSFX;
+
+    bool playSFX;
 
     Vector3 target;
     Vector3 normalPosition;
 
     bool open = false;
 
-    // Start is called before the first frame update
+    public bool isLocked;
+
     void Start()
     {
-        target = new Vector3(this.transform.position.x, this.transform.position.y - offset, this.transform.position.z);
-        normalPosition = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        target = new Vector3(door.transform.position.x, door.transform.position.y - offset, door.transform.position.z);
+        normalPosition = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (open)
+        if (open && !isLocked)
         {
-            float step = 2f * Time.deltaTime; // calculate distance to move
-            transform.position = Vector3.MoveTowards(transform.position, target, step);
+            if (!playSFX)
+            {
+                //audioSource.PlayOneShot(doorSFX);
+                playSFX = true; 
+            }
+
+            float step = 2f * Time.deltaTime;
+            door.transform.position = Vector3.MoveTowards(door.transform.position, target, step);
+
+            if (door.transform.position == target)
+            {
+                //playSFX = false;
+            }
+
+            if (door.transform.position.y <= -1)
+            {
+                door.gameObject.layer = LayerMask.NameToLayer("Default");
+            }
         }
         else
         {
-            float step = 2f * Time.deltaTime; // calculate distance to move
-            transform.position = Vector3.MoveTowards(transform.position, normalPosition, step);
+            float step = 2f * Time.deltaTime; 
+            door.transform.position = Vector3.MoveTowards(door.transform.position, normalPosition, step);
+
+            if (door.transform.position == normalPosition)
+            {
+                playSFX = false;
+            }
+
+            if (door.transform.position.y >= -1)
+            {
+                door.gameObject.layer = LayerMask.NameToLayer("Obstacle");
+            }
         }
     }
 
@@ -47,22 +80,38 @@ public class DoorController : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            //Debug.Log("Move");
-            //float step = 2f * Time.deltaTime; // calculate distance to move
-            //transform.position = Vector3.MoveTowards(transform.position, target, step);
-            //return;
+            //audioSource.PlayOneShot(doorSFX);
+            open = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        //audioSource.PlayOneShot(doorSFX);
         open = false;
     }
 
-    void moveDoor()
+    [PunRPC]
+    public void lockDoor()
     {
-        
+        isLocked = true;
     }
 
+    [PunRPC]
+    public void unlockDoor()
+    {
+        isLocked = false;
+    }
 
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(this.isLocked);
+        }
+        else
+        {
+            this.isLocked= (bool)stream.ReceiveNext();
+        }
+    }
 }

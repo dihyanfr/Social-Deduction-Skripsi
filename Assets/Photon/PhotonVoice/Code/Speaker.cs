@@ -304,6 +304,9 @@ namespace Photon.Voice.Unity
 
         internal void OnAudioFrame(FrameOut<float> frame)
         {
+
+            
+
             this.audioOutput.Push(frame.Buf);
             if (frame.EndOfStream)
             {

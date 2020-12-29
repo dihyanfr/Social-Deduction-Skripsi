@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class MiniGameController : MonoBehaviour
 {
+    [SerializeField] public string minigameName;
     [SerializeField] GameObject minigameCanvas;
     private AudioSource audioSource;
     [SerializeField] private AudioClip startSFX;
@@ -13,9 +15,14 @@ public class MiniGameController : MonoBehaviour
 
     [SerializeField] public GameObject objectInteraction;
     [SerializeField] public Material interactionMaterial;
+
+    [SerializeField] public GameObject gc;
     public int indexMaterial;
     public Material[] tempMaterial;
     private Material tempMats;
+
+    public bool isDone;
+
 
 
     void Start()
@@ -28,34 +35,47 @@ public class MiniGameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, 5f);
+
+        //Debug.Log(hitColliders[0]);
+        foreach (var hitCollider in hitColliders)
+        {
+            if(hitCollider.tag == "Player")
+            {
+                //objectInteraction.GetComponent<MeshRenderer>().material = interactionMaterial;
+            }
+            else
+            {
+                //objectInteraction.GetComponent<MeshRenderer>().material = tempMats;
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(this.transform.position, 5);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-
-        //objectInteraction.GetComponent<MeshRenderer>().material.color = Color.yellow;
-
-        if (Input.GetKeyDown(KeyCode.E))
+        if (collision.transform.tag == "Player" && !isDone)
         {
-            currentInteract = collision.gameObject;
-            startMiniGame();
+
+            //tempMaterial[indexMaterial] = interactionMaterial;
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentInteract = collision.gameObject;
+                startMiniGame();
+            }
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        
-        
-        if (other.tag == "Player")
+        if (other.tag == "Player" && !isDone)
         {
             objectInteraction.GetComponent<MeshRenderer>().material = interactionMaterial;
-            //tempMaterial[indexMaterial] = interactionMaterial;
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                currentInteract = other.gameObject;
-                startMiniGame();
-            }
         }
     }
 
@@ -71,15 +91,17 @@ public class MiniGameController : MonoBehaviour
 
     public void startMiniGame()
     {
-        //currentInteract.GetComponent<PlayerController>().canMove = false;
+        currentInteract.GetComponent<PlayerMovement>().canMove = false;
         minigameCanvas.SetActive(true);
         //audioSource.PlayOneShot(startSFX);
     }
 
     public void endMiniGame()
     {
-        //currentInteract.GetComponent<PlayerController>().canMove = true;
+        currentInteract.GetComponent<PlayerMovement>().canMove = true;
         minigameCanvas.SetActive(false);
+        isDone = true;
+        gc.GetComponent<PhotonView>().RPC("taskDone", RpcTarget.AllBuffered, minigameName);
         //audioSource.PlayOneShot(completeSFX);
     }
 }

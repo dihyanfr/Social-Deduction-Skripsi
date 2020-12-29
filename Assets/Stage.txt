@@ -50,3 +50,10 @@ https://sketchfab.com/3d-models/antena-dfc0e6e423b34c3f923124a1bf6aa1a8
 Audio
 Button Clicked
 https://www.zapsplat.com/music/button-click-fast-plastic/
+Button Beep
+https://www.zapsplat.com/music/button-press-with-beep-brother-ax-450-electronic-typewriter/
+Door SFX
+https://www.zapsplat.com/music/science-fiction-door-open-slide/
+Gunshot SFX
+https://www.zapsplat.com/music/science-fiction-weapon-gun-blaster-gunshot-2/
+

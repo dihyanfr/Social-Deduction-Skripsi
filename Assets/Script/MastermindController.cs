@@ -44,6 +44,6 @@ public class MastermindController : MonoBehaviour
         visionOnCooldown = true;
 
         gc.playerViewRadius = 2f;
-        gc.visionOnSabotage = true;
+        gc.isVisionSabotage = true;
     }
 }

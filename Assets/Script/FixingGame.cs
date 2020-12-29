@@ -9,6 +9,8 @@ public class FixingGame : MonoBehaviour
     [SerializeField] private Slider fixingSlider;
     [SerializeField] private float timer;
 
+    [SerializeField] MiniGameController mgc;
+
     int currentButton;
 
     [SerializeField] AudioSource audioSrc;
@@ -94,6 +96,7 @@ public class FixingGame : MonoBehaviour
     public void changeColor()
     {
         Button btn = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        Debug.Log(btn);
         btn.image.color = Color.blue;
         audioSrc.PlayOneShot(buttonPressed);
         btn.interactable = false;
@@ -130,9 +133,10 @@ public class FixingGame : MonoBehaviour
                 clickedButton[posArray] = null;
             }
             currentButton = 0;
-            shuffleButton();
+            //shuffleButton();
             isBlinking = true;
             clickedButtonIndex = 0;
+            mgc.endMiniGame();
         }
         else
         {
@@ -145,6 +149,7 @@ public class FixingGame : MonoBehaviour
             currentButton = 0;
             isBlinking = true;
             clickedButtonIndex = 0;
+            Debug.Log("WRONG!");
         }
     }
 }

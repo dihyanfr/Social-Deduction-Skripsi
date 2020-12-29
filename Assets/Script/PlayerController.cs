@@ -129,9 +129,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     {
 
         fov.setRadius(gc.playerViewRadius);
-
-        
-
         if (!photonView.IsMine)
         {
             //viewCamera.gameObject.SetActive(false);
@@ -257,9 +254,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
             velocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * moveSpeed;
             animator.SetFloat("MoveSpeed", velocity.magnitude, .1f, Time.deltaTime);
         }
-
-
-
     }
 
     void FixedUpdate()
@@ -284,9 +278,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
         }
-        
-
-        
         JumpingAndLanding();
     }
 
@@ -378,7 +369,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-
+    
     IEnumerator fadeOut(bool fadeaway)
     {
         yield return new WaitForSeconds(5);
@@ -396,7 +387,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-
     private void ShotGun()
     {
         audioSource.PlayOneShot(gunshotSound);
@@ -410,7 +400,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-
     private void ReduceHealth()
     {
         healthPoint = healthPoint - Random.Range(30f, 50f);
