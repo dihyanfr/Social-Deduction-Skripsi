@@ -15,14 +15,14 @@ public class GameController : MonoBehaviour, IPunObservable
     //[SerializeField] public Text task3;
     //[SerializeField] public Text task4;
 
-    [SerializeField] public GameObject[] hackTask;
-    [SerializeField] public string storageCode;
-    [SerializeField] public int code1;
-    [SerializeField] public int code2;
-    [SerializeField] public int code3;
-    [SerializeField] public int task1;
-    [SerializeField] public int task2;
-    [SerializeField] public int task3;
+    //[SerializeField] public GameObject[] hackTask;
+    //[SerializeField] public string storageCode;
+    //[SerializeField] public int code1;
+    //[SerializeField] public int code2;
+    //[SerializeField] public int code3;
+    //[SerializeField] public int task1;
+    //[SerializeField] public int task2;
+    //[SerializeField] public int task3;
     private bool isSet = false;
 
     public bool isRandom = false;
@@ -32,22 +32,36 @@ public class GameController : MonoBehaviour, IPunObservable
     [SerializeField] private int roomSize;
     [SerializeField] private string[] playerList;
 
-    
+    [Header("Stage Game Settings")]
+    [SerializeField] public bool startTimer;
+    [SerializeField] public float time;
+
     //Roles
+    [Header("Roles Settings")]
     private int totalHaveRole;
     private int totalMasterMind;
     private int totalHelper;
 
+    //TypeTask
+    [Header("Type Task Settings")]
+    [SerializeField] public int totalType;
+    [SerializeField] public GameObject[] typeGameObject;
+
     //MemoryTask
     [Header("Memory Task Settings")]
-    public Text memoryGameText;
-    public int memoryGame;
+    [SerializeField] public int totalMemory;
+    [SerializeField] public GameObject[] memoryGameObject;
 
     //BoxTask
     [Header("Box Task Settings")]
-    [SerializeField] public GameObject collectionPoint;
     [SerializeField] public int totalBox;
-    [SerializeField] public Text boxText;
+    [SerializeField] public GameObject[] boxGameObject;
+    [SerializeField] public GameObject collectionPoint;
+
+    //ConnectTask
+    [Header("Connect Task Settings")]
+    [SerializeField] public int totalConnect;
+    [SerializeField] public GameObject[] connectGameObject;
 
     //Door Sabotage
     [Header("Door Sabotage Settings")]
@@ -66,36 +80,55 @@ public class GameController : MonoBehaviour, IPunObservable
     [SerializeField] public float radiusNormal = 13f;
     [SerializeField] public float radiusOnSabotage = 1.5f;
 
+    //Vision Sabotage
+    [Header("User Interfaces")]
+    [SerializeField] public Text memoryGameText;
+    [SerializeField] public Text boxText;
+    [SerializeField] public Text typeText;
+    [SerializeField] public Text connectText;
+    [SerializeField] public Text timer;
+
+
     private void Start()
     {
         bigDoor = GameObject.FindGameObjectsWithTag("DoorDetection");
         lightStage = GameObject.FindGameObjectsWithTag("Light");
 
-        code1 = Random.Range(0, 9);
-        code2 = Random.Range(0, 9);
-        code3 = Random.Range(0, 9);
+        boxGameObject = GameObject.FindGameObjectsWithTag("Box");
+        memoryGameObject = GameObject.FindGameObjectsWithTag("MemoryGame");
+        connectGameObject = GameObject.FindGameObjectsWithTag("ConnectGame");
+        typeGameObject = GameObject.FindGameObjectsWithTag("TypeGame");
 
-        task1 = Random.Range(0, hackTask.Length);
-        task2 = Random.Range(0, hackTask.Length);
-        task3 = Random.Range(0, hackTask.Length);
+        memoryGameText.text = totalMemory.ToString() + " / " + memoryGameObject.Length;
+        boxText.text = totalBox.ToString() + " / " + boxGameObject.Length;
+        connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
+        typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
 
-        if (task2 == task1)
-        {
-            while (task2 == task1)
-            {
-                task2 = Random.Range(0, hackTask.Length);
-            }
-        }
+        //code1 = Random.Range(0, 9);
+        //code2 = Random.Range(0, 9);
+        //code3 = Random.Range(0, 9);
 
-        if (task3 == task2 || task3 == task1)
-        {
-            while (task3 == task2 || task3 == task1)
-            {
-                task3 = Random.Range(0, hackTask.Length);
-            }
-        }
+        //task1 = Random.Range(0, hackTask.Length);
+        //task2 = Random.Range(0, hackTask.Length);
+        //task3 = Random.Range(0, hackTask.Length);
 
-        storageCode = code1.ToString() + code2.ToString() + code3.ToString();
+        //if (task2 == task1)
+        //{
+        //    while (task2 == task1)
+        //    {
+        //        task2 = Random.Range(0, hackTask.Length);
+        //    }
+        //}
+
+        //if (task3 == task2 || task3 == task1)
+        //{
+        //    while (task3 == task2 || task3 == task1)
+        //    {
+        //        task3 = Random.Range(0, hackTask.Length);
+        //    }
+        //}
+
+        //storageCode = code1.ToString() + code2.ToString() + code3.ToString();
 
         //GetComponentInParent<PhotonView>().RPC("setHackCode", RpcTarget.All, code1,code2,code3);
 
@@ -105,14 +138,14 @@ public class GameController : MonoBehaviour, IPunObservable
 
         //roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
         //Debug.Log("Player List: " + PhotonNetwork.PlayerList[0]);
-        
+
     }
 
     private void Update()
     {
         if (!isSet)
         {
-            setHackCode(code1, code2, code3);
+            //setHackCode(code1, code2, code3);
             //GetComponentInParent<PhotonView>().RPC("setHackCode", RpcTarget.AllBuffered, code1, code2, code3);
         }
 
@@ -136,8 +169,30 @@ public class GameController : MonoBehaviour, IPunObservable
 
 
 
-        memoryGameText.text = memoryGame.ToString();
-        boxText.text = totalBox.ToString();
+        memoryGameText.text = totalMemory.ToString() + " / " + memoryGameObject.Length;
+        boxText.text = totalBox.ToString() + " / " + boxGameObject.Length;
+        connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
+        typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
+
+        if (startTimer)
+        {
+            if (time > 0)
+            {
+                time -= Time.deltaTime;
+                //DisplayTime(timeRemaining);
+             
+                float minutes = Mathf.FloorToInt((time + 1) / 60);
+                float seconds = Mathf.FloorToInt((time + 1) % 60);
+
+                timer.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            }
+            else
+            {
+                Debug.Log("Time has run out!");
+                time = 0;
+            }
+        }
+
     }
 
     //public void InitiatePlayer()
@@ -168,20 +223,20 @@ public class GameController : MonoBehaviour, IPunObservable
     [PunRPC]
     public void setHackCode(int c1, int c2,int c3)
     {
-        hackTask[task1].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
-        hackTask[task2].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
-        hackTask[task3].GetComponent<TypeGame>().setCode(code3.ToString(), 3);
+        //hackTask[task1].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
+        //hackTask[task2].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
+        //hackTask[task3].GetComponent<TypeGame>().setCode(code3.ToString(), 3);
 
-        for (int i = 0; i < hackTask.Length; i++)
-        {
-            if (i != task1 && i != task2 && i != task3)
-            {
-                //hackTask[i].GetComponentInParent<MiniGameController>().enabled = false;
-                Destroy(hackTask[i].GetComponentInParent<MiniGameController>());
-            }
+        //for (int i = 0; i < hackTask.Length; i++)
+        //{
+        //    if (i != task1 && i != task2 && i != task3)
+        //    {
+        //        //hackTask[i].GetComponentInParent<MiniGameController>().enabled = false;
+        //        Destroy(hackTask[i].GetComponentInParent<MiniGameController>());
+        //    }
             
-        }
-        isSet = true;
+        //}
+        //isSet = true;
         //doorTask[0].GetComponent<CodeGame>().code = storageCode;
 
     }
@@ -191,46 +246,59 @@ public class GameController : MonoBehaviour, IPunObservable
     {
         if(type == "Memory Game")
         {
-            memoryGame++;
+            totalMemory++;
         }
         if (type == "Box")
         {
             totalBox++;
         }
-
-        memoryGameText.text = memoryGame.ToString();
-        boxText.text = totalBox.ToString();
+        if (type == "Connect Game")
+        {
+            totalConnect++;
+        }
+        if (type == "Type Game")
+        {
+            totalType++;
+        }
+        if(memoryGameText != null)
+        {
+            memoryGameText.text = totalMemory.ToString() + " / " + memoryGameObject.Length;
+            boxText.text = totalBox.ToString() + " / " + boxGameObject.Length;
+            connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
+            typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
+        }
     }
 
     [PunRPC]
     public void shuffleTask()
     {
-        for (int i = 0; i < hackTask.Length; i++)
-        {
-            int rnd = Random.Range(0, hackTask.Length);
-            GameObject tempGO = hackTask[rnd];
-            hackTask[rnd] = hackTask[i];
-            hackTask[i] = tempGO;
-        }
+        //for (int i = 0; i < hackTask.Length; i++)
+        //{
+        //    int rnd = Random.Range(0, hackTask.Length);
+        //    GameObject tempGO = hackTask[rnd];
+        //    hackTask[rnd] = hackTask[i];
+        //    hackTask[i] = tempGO;
+        //}
 
-        hackTask[0].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
-        hackTask[1].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
-        hackTask[2].GetComponent<TypeGame>().setCode(code3.ToString(), 3);
+        //hackTask[0].GetComponent<TypeGame>().setCode(code1.ToString(), 1);
+        //hackTask[1].GetComponent<TypeGame>().setCode(code2.ToString(), 2);
+        //hackTask[2].GetComponent<TypeGame>().setCode(code3.ToString(), 3);
 
-        for (int i = 3; i < hackTask.Length; i++)
-        {
-            hackTask[i].GetComponentInParent<MiniGameController>().enabled = false;
-            Destroy(hackTask[i].GetComponentInParent<MiniGameController>());
-        }
+        //for (int i = 3; i < hackTask.Length; i++)
+        //{
+        //    hackTask[i].GetComponentInParent<MiniGameController>().enabled = false;
+        //    Destroy(hackTask[i].GetComponentInParent<MiniGameController>());
+        //}
 
-        doorTask[0].GetComponent<CodeGame>().code = storageCode;
+        //doorTask[0].GetComponent<CodeGame>().code = storageCode;
     }
 
     [PunRPC]
     public void lockedDoorUI()
     {
-        lockedDoor.gameObject.SetActive(true);
         isDoorLocked = true;
+        //lockedDoor.gameObject.SetActive(true);
+        //isDoorLocked = true;
     }
 
     [PunRPC]
@@ -268,21 +336,21 @@ public class GameController : MonoBehaviour, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(this.code1);
-            stream.SendNext(this.code2);
-            stream.SendNext(this.code3);
-            stream.SendNext(this.task1);
-            stream.SendNext(this.task2);
-            stream.SendNext(this.task3);
+            //stream.SendNext(this.code1);
+            //stream.SendNext(this.code2);
+            //stream.SendNext(this.code3);
+            //stream.SendNext(this.task1);
+            //stream.SendNext(this.task2);
+            //stream.SendNext(this.task3);
         }
         else
         {
-            this.code1 = (int)stream.ReceiveNext();
-            this.code2 = (int)stream.ReceiveNext();
-            this.code3 = (int)stream.ReceiveNext();
-            this.task1 = (int)stream.ReceiveNext();
-            this.task2 = (int)stream.ReceiveNext();
-            this.task3 = (int)stream.ReceiveNext();
+            //this.code1 = (int)stream.ReceiveNext();
+            //this.code2 = (int)stream.ReceiveNext();
+            //this.code3 = (int)stream.ReceiveNext();
+            //this.task1 = (int)stream.ReceiveNext();
+            //this.task2 = (int)stream.ReceiveNext();
+            //this.task3 = (int)stream.ReceiveNext();
         }
     }
 

@@ -17,6 +17,9 @@ TagManager:
   - Stage
   - Box
   - Collection
+  - MemoryGame
+  - TypeGame
+  - ConnectGame
   layers:
   - Default
   - TransparentFX

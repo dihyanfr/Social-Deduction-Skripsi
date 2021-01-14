@@ -11,13 +11,17 @@ public class MastermindController : MonoBehaviour
     [SerializeField] private Slider visionCooldown;
     public float visionCooldownTime;
     public bool visionOnCooldown;
+    [SerializeField] private Slider doorCooldown;
+    public float doorCooldownTime;
+    public bool doorOnCooldown;
     [SerializeField] private Slider targetingCooldown;
     public float targetingCooldownTime;
 
     void Start()
     {
+        gc = GameObject.FindObjectOfType<GameController>();
         visionCooldown.value = 0;
-        targetingCooldown.value = 0;
+        //targetingCooldown.value = 0;
 
         visionOnCooldown = false;
     }
@@ -36,6 +40,16 @@ public class MastermindController : MonoBehaviour
                 visionOnCooldown = false;
             }
         }
+
+        if (doorOnCooldown)
+        {
+            doorCooldown.value -= doorCooldownTime * Time.deltaTime;
+
+            if(doorCooldownTime <= 0)
+            {
+                doorOnCooldown = false;
+            }
+        }
     }
 
     public void visionSabotage()
@@ -45,5 +59,11 @@ public class MastermindController : MonoBehaviour
 
         gc.playerViewRadius = 2f;
         gc.isVisionSabotage = true;
+    }
+
+    public void doorSabotage()
+    {
+        doorCooldown.value = 100;
+        doorOnCooldown = true;
     }
 }

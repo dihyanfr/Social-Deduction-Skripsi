@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class ConnectLineGame : MonoBehaviour
 {
+    public MiniGameController mgc;
     public LineRenderer lrBlue;
     public LineRenderer lrRed;
     public Material lineMaterial;
     public float lineWidth;
+    public Camera camera;
 
     public EventSystem es;
 
@@ -26,6 +28,7 @@ public class ConnectLineGame : MonoBehaviour
 
     public GameObject start;
 
+    public GameObject buttonHolder;
     public Button[] button;
     public Button resetButton;
     public AudioClip buttonSFX;
@@ -45,7 +48,7 @@ public class ConnectLineGame : MonoBehaviour
     {
         currentIndex = 0;
         resetButton.gameObject.SetActive(false);
-        button = FindObjectsOfType<Button>();
+        button = buttonHolder.GetComponentsInChildren<Button>();//FindObjectsOfType<Button>();
         resetButton.gameObject.SetActive(true);
         setRandomStart();
 
@@ -53,19 +56,24 @@ public class ConnectLineGame : MonoBehaviour
         {
             audioSource = FindObjectOfType<AudioSource>();
         }
+        camera = Camera.main;
+        camera.transform.rotation = Quaternion.identity;
     }
 
     public void setStart()
     {
+        
         if (!drawingRed && !drawingBlue)
         {
             if(es.currentSelectedGameObject.GetComponent<Button>() == button[startBlue])
             {
+                Debug.Log("START BLUE");
                 drawingBlue = true;
                 current = es.currentSelectedGameObject;
                 lrBlue = button[startBlue].gameObject.AddComponent<LineRenderer>();
 
                 lrBlue.material = lineMaterial;
+                lrBlue.alignment = LineAlignment.TransformZ;
                 lrBlue.startWidth = lineWidth;
                 lrBlue.endWidth = lineWidth;
                 lrBlue.startColor = Color.blue;
@@ -75,11 +83,13 @@ public class ConnectLineGame : MonoBehaviour
             }
             else if(es.currentSelectedGameObject.GetComponent<Button>() == button[startRed])
             {
+                Debug.Log("START RED");
                 drawingRed = true;
                 current = es.currentSelectedGameObject;
                 lrRed = button[startRed].gameObject.AddComponent<LineRenderer>();
 
                 lrRed.material = lineMaterial;
+                lrRed.alignment = LineAlignment.TransformZ;
                 lrRed.startWidth = lineWidth;
                 lrRed.endWidth = lineWidth;
                 lrRed.startColor = Color.red;
@@ -201,10 +211,12 @@ public class ConnectLineGame : MonoBehaviour
         drawingBlue = false;
         drawingRed = false;
         setRandomStart();
+        currentIndex = 0;
     }
 
     public void Finish()
     {
-        //FinishHere
+        camera.transform.rotation = Quaternion.Euler(45, 0, 0);
+        mgc.endMiniGame();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using Photon.Pun.Simple;
 using UnityEngine.UI;
 
@@ -53,6 +54,8 @@ public class PlayerMovement : MonoBehaviour
     public bool isMastermind;
     public CanvasGroup roleReveal;
 
+    public Recorder recorder;
+
     public Canvas mastermindCanvas;
     public Canvas playerUI;
 
@@ -71,6 +74,11 @@ public class PlayerMovement : MonoBehaviour
     public GameObject currentTarget;
     public GameObject objectPos;
     public GameObject currentBringObject;
+
+    public GameObject boxIcon;
+    public GameObject typeIcon;
+    public GameObject memoryIcon;
+    public GameObject connectIcon;
 
     public bool canMove = false;
 
@@ -114,7 +122,9 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        codeTask = gc.code1.ToString() + gc.code2.ToString() + gc.code3.ToString() + " " + gc.task1.ToString() + " " + gc.task2.ToString() + " " + gc.task3.ToString();
+        
+
+        //codeTask = gc.code1.ToString() + gc.code2.ToString() + gc.code3.ToString() + " " + gc.task1.ToString() + " " + gc.task2.ToString() + " " + gc.task3.ToString();
         if (!pv.IsMine)
         {
             return;
@@ -123,6 +133,15 @@ public class PlayerMovement : MonoBehaviour
         if (currentTarget != null)
         {
             
+        }
+
+        if (!canMove)
+        {
+            Debug.Log("CANT MOVEEEEE");
+            animator.SetBool("walking", false);
+            animator.SetFloat("speed", 0);
+            velocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * 0;
+            return;
         }
 
         healthPointSlider.value = healthPoint;
@@ -144,7 +163,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 velocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * moveSpeed;
                 animator.SetBool("walking", true);
-                Debug.Log(velocity.magnitude);
+                //Debug.Log(velocity.magnitude);
                 animator.SetFloat("speed", velocity.magnitude, .1f, Time.deltaTime);
             }
             else
@@ -170,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("walking", false);
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && !isBringObject)
         {
             Cursor.visible = false;
             
@@ -188,7 +207,7 @@ public class PlayerMovement : MonoBehaviour
                 lr.SetPosition(1, targetPos);
                 transform.LookAt(new Vector3(targetPos.x, 0, targetPos.z));
             }
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !isBringObject)
             {
                 animator.SetTrigger("isShooting");
                 Debug.Log(animator.GetCurrentAnimatorStateInfo(0));
@@ -202,10 +221,23 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("isPistol", false);
         }
         Cursor.visible = true;
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            recorder.TransmitEnabled = true;
+        }
+        else
+        {
+            recorder.TransmitEnabled = false;
+
+        }
+
         if (isMastermind)
         {
             
         }
+
+
         //fieldOfViewRadius = gc.playerViewRadius;
         //fov.setRadius(fieldOfViewRadius);
     }
@@ -260,8 +292,59 @@ public class PlayerMovement : MonoBehaviour
                 }
                 
             }
-
         }
+
+        if(other.GetComponent<MiniGameController>() != null || other.GetComponent<BoxController1>() != null)
+        {
+            if(other.gameObject.tag == "MemoryGame")
+            {
+                memoryIcon.SetActive(true);
+
+                boxIcon.SetActive(false);
+                connectIcon.SetActive(false);
+                typeIcon.SetActive(false);
+            }
+
+            if (other.gameObject.tag == "Box")
+            {
+                boxIcon.SetActive(true);
+
+                memoryIcon.SetActive(false);
+                connectIcon.SetActive(false);
+                typeIcon.SetActive(false);
+            }
+
+            if (other.gameObject.tag == "ConnectGame")
+            {
+                connectIcon.SetActive(true);
+
+                memoryIcon.SetActive(false);
+                boxIcon.SetActive(false);
+                typeIcon.SetActive(false);
+            }
+
+            if (other.gameObject.tag == "TypeGame")
+            {
+                typeIcon.SetActive(true);
+
+                memoryIcon.SetActive(false);
+                boxIcon.SetActive(false);
+                connectIcon.SetActive(false);
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                other.GetComponent<MiniGameController>().startMiniGame();
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        memoryIcon.SetActive(false);
+        boxIcon.SetActive(false);
+        connectIcon.SetActive(false);
+        typeIcon.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -388,7 +471,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("LOCKING DOOR!");
         GameObject[] bigDoor = GameObject.FindGameObjectsWithTag("DoorDetection");
 
-        gc.GetComponent<PhotonView>().RPC("lockedDoorUI",RpcTarget.AllBuffered);
+        //gc.GetComponent<PhotonView>().RPC("lockedDoorUI",RpcTarget.AllBuffered);
 
         for (int i = 0; i < bigDoor.Length; i++)
         {

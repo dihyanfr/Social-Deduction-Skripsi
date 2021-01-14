@@ -107,10 +107,10 @@ public class TypeGame : MonoBehaviourPun, IPunObservable
 
             if (score >= 100f)
             {
-                //mgc.endMiniGame();
-                codeText.SetActive(true);
-                GetComponent<PhotonView>().RPC("setHacked", RpcTarget.All);
-                isHacked = true;
+                mgc.endMiniGame();
+                //codeText.SetActive(true);
+                //GetComponent<PhotonView>().RPC("setHacked", RpcTarget.All);
+                //isHacked = true;
                 return;
             }
 

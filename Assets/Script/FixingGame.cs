@@ -12,6 +12,7 @@ public class FixingGame : MonoBehaviour
     [SerializeField] MiniGameController mgc;
 
     int currentButton;
+    int currentIndex = 1;
 
     [SerializeField] AudioSource audioSrc;
     [SerializeField] AudioClip buttonPressed;
@@ -25,6 +26,8 @@ public class FixingGame : MonoBehaviour
     bool isBlinking = true;
     bool isCorrect;
 
+    float speedBlinking;
+
     void Start()
     {
         fixingSlider.value = 0;
@@ -33,7 +36,23 @@ public class FixingGame : MonoBehaviour
         {
             shuffleButton();
         }
-        
+
+        currentIndex = 1;
+
+    }
+
+    private void OnEnable()
+    {
+        fixingSlider.value = 0;
+
+        if (currentButton != 9)
+        {
+            shuffleButton();
+        }
+
+        currentIndex = 1;
+        speedBlinking = 0;
+        currentIndex = 1;
     }
 
     // Update is called once per frame
@@ -44,11 +63,11 @@ public class FixingGame : MonoBehaviour
 
     void Fixing()
     {
-        fixingSlider.value += 2 * Time.deltaTime;
+        fixingSlider.value += speedBlinking * Time.deltaTime;
 
         if(timer<= 1f)
         {
-            timer += Time.deltaTime;
+            timer += Time.deltaTime + speedBlinking;
         }
         else
         {
@@ -64,15 +83,14 @@ public class FixingGame : MonoBehaviour
 
     void randomBlinking()
     {
-        if(currentButton == button.Length)
+        if (currentButton == currentIndex)
         {
             for (int posArray = 0; posArray < button.Length; posArray++)
             {
                 button[posArray].interactable = true;
                 button[posArray].image.color = Color.white;
-                audioSrc.PlayOneShot(buttonPressed);
+                //audioSrc.PlayOneShot(buttonPressed);
             }
-
             isBlinking = false;
             return;
         }
@@ -103,16 +121,19 @@ public class FixingGame : MonoBehaviour
         clickedButton[clickedButtonIndex] = btn;
         clickedButtonIndex++;
 
-        if(clickedButtonIndex == clickedButton.Length)
+        if(clickedButtonIndex == currentIndex)//clickedButton.Length)
         {
-            checkAnswer();
+            Debug.Log("current index" + currentIndex);
+            //checkAnswer();
+            StartCoroutine(CheckAnswer());
         }
     }
 
     void checkAnswer()
     {
-        for (int posArray = 0; posArray < button.Length; posArray++)
+        for (int posArray = 0; posArray != currentIndex; posArray++)
         {
+            Debug.Log("current index" + currentIndex);
             if (button[posArray] != clickedButton[posArray])
             {
                 isCorrect = false;
@@ -126,17 +147,25 @@ public class FixingGame : MonoBehaviour
 
         if (isCorrect)
         {
+            currentIndex++;
             audioSrc.PlayOneShot(correctSFX);
             for (int posArray = 0; posArray < button.Length; posArray++)
             {
                 button[posArray].image.color = Color.white;
                 clickedButton[posArray] = null;
+                button[posArray].interactable = false;
             }
             currentButton = 0;
             //shuffleButton();
             isBlinking = true;
             clickedButtonIndex = 0;
-            mgc.endMiniGame();
+            Debug.Log("Correct");
+            if(currentIndex - 1 == button.Length)
+            {
+                mgc.endMiniGame();
+                return;
+            }
+            speedBlinking += 0.005f;
         }
         else
         {
@@ -145,6 +174,63 @@ public class FixingGame : MonoBehaviour
             {
                 button[posArray].image.color = Color.white;
                 clickedButton[posArray] = null;
+                
+            }
+            currentButton = 0;
+            isBlinking = true;
+            clickedButtonIndex = 0;
+            Debug.Log("WRONG!");
+        }
+    }
+    
+    IEnumerator CheckAnswer()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        for (int posArray = 0; posArray != currentIndex; posArray++)
+        {
+            Debug.Log("current index" + currentIndex);
+            if (button[posArray] != clickedButton[posArray])
+            {
+                isCorrect = false;
+                break;
+            }
+            else
+            {
+                isCorrect = true;
+            }
+        }
+
+        if (isCorrect)
+        {
+            currentIndex++;
+            audioSrc.PlayOneShot(correctSFX);
+            for (int posArray = 0; posArray < button.Length; posArray++)
+            {
+                button[posArray].image.color = Color.white;
+                clickedButton[posArray] = null;
+                button[posArray].interactable = false;
+            }
+            currentButton = 0;
+            //shuffleButton();
+            isBlinking = true;
+            clickedButtonIndex = 0;
+            Debug.Log("Correct");
+            if (currentIndex - 1 == button.Length)
+            {
+                mgc.endMiniGame();
+                yield return new WaitForSeconds(1);
+            }
+            speedBlinking += 0.005f;
+        }
+        else
+        {
+            audioSrc.PlayOneShot(wrongSFX);
+            for (int posArray = 0; posArray < button.Length; posArray++)
+            {
+                button[posArray].image.color = Color.white;
+                clickedButton[posArray] = null;
+
             }
             currentButton = 0;
             isBlinking = true;

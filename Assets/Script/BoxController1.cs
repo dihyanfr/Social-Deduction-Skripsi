@@ -6,6 +6,7 @@ using Photon.Pun;
 public class BoxController1 : MonoBehaviour
 {
     public SphereCollider sc;
+    public BoxCollider bc;
     public bool onPlayer;
     public bool onCollection;
 
@@ -56,6 +57,7 @@ public class BoxController1 : MonoBehaviour
         this.transform.position = _objectPos;
         this.transform.rotation = _objectRot;
         this.GetComponent<Rigidbody>().isKinematic = true;
+        bc.isTrigger = true;
     }
 
     [PunRPC]
@@ -65,6 +67,7 @@ public class BoxController1 : MonoBehaviour
         onPlayer = false;
         this.transform.parent = null;
         this.GetComponent<Rigidbody>().isKinematic = false;
+        bc.isTrigger = false;
 
         if (onCollection)
         {

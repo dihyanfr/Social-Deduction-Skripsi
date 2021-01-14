@@ -42,6 +42,18 @@ Digital Font
 https://www.dafont.com/alarm-clock.font?text=1234567890
 UI
 https://wenrexa.itch.io/ui-different03
+HackIcon
+https://www.flaticon.com/free-icon/hacking_2431709?term=hack&page=1&position=3&related_id=2431709&origin=search
+BoxIcon
+https://www.flaticon.com/free-icon/box_3037071?term=box&page=1&position=45&related_id=3037071&origin=search
+ConnectIcon
+https://www.flaticon.com/free-icon/mind-map_3815382?term=connect&page=3&position=83&related_id=3815382&origin=search
+MemoryIcon
+https://www.flaticon.com/free-icon/password_2125117?term=panel&page=1&position=34&related_id=2125117&origin=search
+DoorLock
+https://www.flaticon.com/free-icon/door_1380069?term=door+lock&page=1&position=61&related_id=1380069&origin=search
+Blind
+https://www.flaticon.com/free-icon/hide_748098?term=blind&page=1&position=3&related_id=748098&origin=search
 
 3D
 Antenna
@@ -56,4 +68,7 @@ Door SFX
 https://www.zapsplat.com/music/science-fiction-door-open-slide/
 Gunshot SFX
 https://www.zapsplat.com/music/science-fiction-weapon-gun-blaster-gunshot-2/
-
+Background SFX
+https://freesound.org/people/TheDweebMan/sounds/277192/
+MainMenu SFX
+https://www.youtube.com/watch?v=XVbvE0PJyss

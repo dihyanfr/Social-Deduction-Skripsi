@@ -1844,8 +1844,6 @@ MonoBehaviour:
   sharedStateNames:
   - Walk
   - Base Layer.Walk
-  - Idle
-  - Base Layer.Idle
   - Jump
   - Base Layer.Jump
   - Left Turn 90
@@ -1854,14 +1852,19 @@ MonoBehaviour:
   - Base Layer.idle with pistol
   - pistol shooting with recoil
   - Base Layer.pistol shooting with recoil
+  - HumanoidWalk
+  - Base Layer.HumanoidWalk
+  - Walk 0
+  - Base Layer.Walk 0
   - UpperBodyRun
   - SecondLayer.UpperBodyRun
+  - Idle
   - SecondLayer.Idle
   - Blendy
   - SecondLayer.Blendy
   sharedTransNames: []
   sharedTriggIndexes: 1606b3a7234d916890691ff02c8defb7de66950d
-  sharedStateIndexes: 6bd5a32d398fdc042b1a167c7940695528a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c7268b22ee8aaf8142e36508444a81669c9a8ea0ca0
+  sharedStateIndexes: 6bd5a32d398fdc0428a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c721ae8ff5a3958fcfc65bf34822611078168b22ee8aaf8142e2b1a167c36508444a81669c9a8ea0ca0
   animator: {fileID: 5492007423186219191}
   autoRootMotion: 1
   syncPassThrus: 1
@@ -2424,15 +2427,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f98b00eb7d286454bbfb3e25c223b533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb_ragdoll: []
+  cl_ragdoll: []
   moveSpeed: 5
+  step: []
+  audioSource: {fileID: 0}
   fps: 30
   gun: {fileID: 3488355893849814143}
   bullet: {fileID: 7116359900541625114, guid: 02c6be86d36390348919a2613d80f4f3, type: 3}
+  gunshotSound: {fileID: 0}
   inventory: {fileID: 0}
   gunPos: {fileID: 7728322792626000042}
   lr: {fileID: 5638849725268760173}
   frames: []
   muzzleRenderer: {fileID: 0}
+  currentRole: 
+  role: {fileID: 0}
+  roleText: {fileID: 0}
+  isMastermind: 0
+  roleReveal: {fileID: 0}
+  mastermindCanvas: {fileID: 0}
+  playerUI: {fileID: 0}
+  healthPoint: 0
+  healthPointSlider: {fileID: 0}
+  fov: {fileID: 0}
+  fieldOfViewRadius: 0
+  code: {fileID: 0}
+  codeTask: 
+  gc: {fileID: 0}
+  isDie: 0
+  alreadyDie: 0
+  dieForcePos: {fileID: 0}
+  currentTarget: {fileID: 0}
+  objectPos: {fileID: 0}
+  currentBringObject: {fileID: 0}
+  canMove: 0
 --- !u!114 &7728322792635762127
 MonoBehaviour:
   m_ObjectHideFlags: 0
