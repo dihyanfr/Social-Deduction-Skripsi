@@ -53,6 +53,22 @@ public class FixingGame : MonoBehaviour
         currentIndex = 1;
         speedBlinking = 0;
         currentIndex = 1;
+        Fixing();
+        Debug.Log("ON!!!!!!!!!!!!!!!!!");
+
+    }
+
+    private void OnDisable()
+    {
+        fixingSlider.value = 0;
+
+        if (currentButton != 9)
+        {
+            shuffleButton();
+        }
+
+        currentIndex = 1;
+
     }
 
     // Update is called once per frame
@@ -160,12 +176,13 @@ public class FixingGame : MonoBehaviour
             isBlinking = true;
             clickedButtonIndex = 0;
             Debug.Log("Correct");
-            if(currentIndex - 1 == button.Length)
+            if(currentIndex - 1 == 5) //button.Length)
             {
                 mgc.endMiniGame();
                 return;
             }
             speedBlinking += 0.005f;
+            //Fixing();
         }
         else
         {
@@ -180,6 +197,7 @@ public class FixingGame : MonoBehaviour
             isBlinking = true;
             clickedButtonIndex = 0;
             Debug.Log("WRONG!");
+            //Fixing();
         }
     }
     
@@ -216,12 +234,13 @@ public class FixingGame : MonoBehaviour
             isBlinking = true;
             clickedButtonIndex = 0;
             Debug.Log("Correct");
-            if (currentIndex - 1 == button.Length)
+            if (currentIndex - 1 == 5)
             {
                 mgc.endMiniGame();
                 yield return new WaitForSeconds(1);
             }
             speedBlinking += 0.005f;
+            //Fixing();
         }
         else
         {
@@ -236,6 +255,7 @@ public class FixingGame : MonoBehaviour
             isBlinking = true;
             clickedButtonIndex = 0;
             Debug.Log("WRONG!");
+            //Fixing();
         }
     }
 }

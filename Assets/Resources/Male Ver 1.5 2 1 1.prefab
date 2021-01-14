@@ -1850,6 +1850,7 @@ MonoBehaviour:
   roleText: {fileID: 4025751761319183761}
   isMastermind: 0
   roleReveal: {fileID: 995273091742059296}
+  recorder: {fileID: 0}
   mastermindCanvas: {fileID: 2218831858877980451}
   playerUI: {fileID: 1047554575707484728}
   healthPoint: 100
@@ -1865,6 +1866,10 @@ MonoBehaviour:
   currentTarget: {fileID: 0}
   objectPos: {fileID: 1993798277946231129}
   currentBringObject: {fileID: 0}
+  boxIcon: {fileID: 0}
+  typeIcon: {fileID: 0}
+  memoryIcon: {fileID: 0}
+  connectIcon: {fileID: 0}
   canMove: 0
 --- !u!114 &7928959412709848448
 MonoBehaviour:
@@ -1943,6 +1948,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: isPistol
+  - Type: 4
+    SynchronizeType: 0
+    Name: isBring
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -1984,7 +1992,7 @@ MonoBehaviour:
   voiceDetection: 0
   voiceDetectionThreshold: 0.938
   voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: Microphone (High Definition Audio Device)
+  unityMicrophoneDevice: Microphone (Realtek(R) Audio)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
   debugEchoMode: 0

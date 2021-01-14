@@ -84,6 +84,8 @@ public class PlayerMovement : MonoBehaviour
 
     bool healing;
 
+    public GameObject arrow;
+
     private void Awake()
     {
         this.transform.rotation = Quaternion.identity;
@@ -237,7 +239,18 @@ public class PlayerMovement : MonoBehaviour
             
         }
 
+        if (gc.isEscape)
+        {
+            arrow.SetActive(true);
+            arrow.transform.LookAt(GameObject.FindGameObjectWithTag("Escape").transform);
+        }
+        else
+        {
+            arrow.transform.LookAt(GameObject.FindGameObjectWithTag("CP").transform);
+        }
 
+        //arrow.transform.LookAt(GameObject.FindGameObjectWithTag("CP").transform);
+        //arrow.transform.rotation = Quaternion.Euler(0, arrow.transform.rotation.y, 0);
         //fieldOfViewRadius = gc.playerViewRadius;
         //fov.setRadius(fieldOfViewRadius);
     }
@@ -282,6 +295,8 @@ public class PlayerMovement : MonoBehaviour
                     currentBringObject = other.transform.gameObject;
                     animator.SetBool("isBring", true);
                     isBringObject = true;
+
+                    arrow.SetActive(true);
                 }
                 else
                 {
@@ -289,6 +304,7 @@ public class PlayerMovement : MonoBehaviour
                     currentBringObject = null;
                     animator.SetBool("isBring", false);
                     isBringObject = false;
+                    arrow.SetActive(false);
                 }
                 
             }
@@ -356,6 +372,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 GetComponent<PhotonView>().RPC("getKilled", RpcTarget.AllBuffered);
             }
+        }
+
+        if(other.gameObject.tag == "Escape")
+        {
+            gc.crewmateWin();
         }
     }
 

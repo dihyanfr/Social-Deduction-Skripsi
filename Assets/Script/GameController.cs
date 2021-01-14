@@ -46,22 +46,26 @@ public class GameController : MonoBehaviour, IPunObservable
     [Header("Type Task Settings")]
     [SerializeField] public int totalType;
     [SerializeField] public GameObject[] typeGameObject;
+    [SerializeField] public GameObject panelUIType;
 
     //MemoryTask
     [Header("Memory Task Settings")]
     [SerializeField] public int totalMemory;
     [SerializeField] public GameObject[] memoryGameObject;
+    [SerializeField] public GameObject panelUIMemory;
 
     //BoxTask
     [Header("Box Task Settings")]
     [SerializeField] public int totalBox;
     [SerializeField] public GameObject[] boxGameObject;
     [SerializeField] public GameObject collectionPoint;
+    [SerializeField] public GameObject panelUIBox;
 
     //ConnectTask
     [Header("Connect Task Settings")]
     [SerializeField] public int totalConnect;
     [SerializeField] public GameObject[] connectGameObject;
+    [SerializeField] public GameObject panelUIConnect;
 
     //Door Sabotage
     [Header("Door Sabotage Settings")]
@@ -87,6 +91,15 @@ public class GameController : MonoBehaviour, IPunObservable
     [SerializeField] public Text typeText;
     [SerializeField] public Text connectText;
     [SerializeField] public Text timer;
+
+    //Scenario
+    [Header("Scenario")]
+    [SerializeField] public GameObject escapePoint;
+    [SerializeField] public int totalPlayer;
+    [SerializeField] public GameObject panelUIEscape;
+    [SerializeField] public bool isEscape;
+    [SerializeField] public GameObject winCrewmateUI;
+    [SerializeField] public GameObject winMastermindUI;
 
 
     private void Start()
@@ -173,6 +186,20 @@ public class GameController : MonoBehaviour, IPunObservable
         boxText.text = totalBox.ToString() + " / " + boxGameObject.Length;
         connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
         typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
+
+        if (totalMemory == memoryGameObject.Length && totalBox == boxGameObject.Length && totalConnect == connectGameObject.Length && totalType == connectGameObject.Length)
+        {
+            escapePoint.SetActive(true);
+
+            panelUIEscape.SetActive(true);
+
+            panelUIMemory.SetActive(false);
+            panelUIBox.SetActive(false);
+            panelUIConnect.SetActive(false);
+            panelUIType.SetActive(false);
+
+            isEscape = true;
+        }
 
         if (startTimer)
         {
@@ -352,6 +379,16 @@ public class GameController : MonoBehaviour, IPunObservable
             //this.task2 = (int)stream.ReceiveNext();
             //this.task3 = (int)stream.ReceiveNext();
         }
+    }
+
+    public void crewmateWin()
+    {
+        winCrewmateUI.SetActive(true);
+    }
+
+    public void exitGame()
+    {
+        Application.Quit();
     }
 
 }
