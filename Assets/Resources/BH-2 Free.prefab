@@ -792,6 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eea7413ef247ee4489307522eaf805bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  zombieController: {fileID: 0}
   wanderRadius: 35
   wanderTimer: 5
   wanderSpeed: 0.5

@@ -27,7 +27,7 @@ public class UIDebug : MonoBehaviour
             total++;
             int average_fps = totalFPS / total;
             FPS.text = "FPS: " + fps;
-            averageFPS.text = "Average FPS: " + average_fps.ToString();
+            //averageFPS.text = "Average FPS: " + average_fps.ToString();
             timer = Time.unscaledTime + hudRefreshRate;
         }
     }

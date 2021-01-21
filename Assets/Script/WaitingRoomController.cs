@@ -36,6 +36,10 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
     [SerializeField] private float maxFullGametime;
 
 
+    [SerializeField] private GameObject playerAvatar;
+    [SerializeField] private Transform[] spawnPosition;
+
+
     void Start()
     {
         myPV = GetComponent<PhotonView>();
@@ -44,6 +48,8 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
         timerToStartGame = maxWaitTime;
 
         PlayerCountUpdate();
+
+        PhotonNetwork.Instantiate(playerAvatar.name, new Vector3(spawnPosition[playerCount - 1].position.x, spawnPosition[playerCount - 1].position.y, spawnPosition[playerCount - 1].position.z), Quaternion.identity);
     }
 
     private void PlayerCountUpdate()
@@ -65,6 +71,8 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+       
+        //Debug.Log("ADD");
         PlayerCountUpdate();
 
         if (PhotonNetwork.IsMasterClient)

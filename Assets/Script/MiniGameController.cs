@@ -41,6 +41,7 @@ public class MiniGameController : MonoBehaviour
         audioSource = GameObject.FindObjectOfType<AudioSource>();
         tempMaterial = objectInteraction.GetComponent<MeshRenderer>().materials;
         tempMats = tempMaterial[indexMaterial];
+        
 
         setHintPage();
     }

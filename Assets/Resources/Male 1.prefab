@@ -1856,6 +1856,8 @@ MonoBehaviour:
   - Base Layer.HumanoidWalk
   - Walk 0
   - Base Layer.Walk 0
+  - Bring
+  - Base Layer.Bring
   - UpperBodyRun
   - SecondLayer.UpperBodyRun
   - Idle
@@ -1864,7 +1866,7 @@ MonoBehaviour:
   - SecondLayer.Blendy
   sharedTransNames: []
   sharedTriggIndexes: 1606b3a7234d916890691ff02c8defb7de66950d
-  sharedStateIndexes: 6bd5a32d398fdc0428a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c721ae8ff5a3958fcfc65bf34822611078168b22ee8aaf8142e2b1a167c36508444a81669c9a8ea0ca0
+  sharedStateIndexes: 6bd5a32d398fdc0428a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c721ae8ff5a3958fcfc65bf3482261107815ed6894adc99c5cf68b22ee8aaf8142e2b1a167c36508444a81669c9a8ea0ca0
   animator: {fileID: 5492007423186219191}
   autoRootMotion: 1
   syncPassThrus: 1
@@ -2446,6 +2448,7 @@ MonoBehaviour:
   roleText: {fileID: 0}
   isMastermind: 0
   roleReveal: {fileID: 0}
+  recorder: {fileID: 0}
   mastermindCanvas: {fileID: 0}
   playerUI: {fileID: 0}
   healthPoint: 0
@@ -2461,7 +2464,12 @@ MonoBehaviour:
   currentTarget: {fileID: 0}
   objectPos: {fileID: 0}
   currentBringObject: {fileID: 0}
+  boxIcon: {fileID: 0}
+  typeIcon: {fileID: 0}
+  memoryIcon: {fileID: 0}
+  connectIcon: {fileID: 0}
   canMove: 0
+  arrow: {fileID: 0}
 --- !u!114 &7728322792635762127
 MonoBehaviour:
   m_ObjectHideFlags: 0

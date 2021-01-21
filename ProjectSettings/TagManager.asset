@@ -22,6 +22,10 @@ TagManager:
   - ConnectGame
   - CP
   - Escape
+  - Floor
+  - DiePos
+  - ZC
+  - CCTV
   layers:
   - Default
   - TransparentFX

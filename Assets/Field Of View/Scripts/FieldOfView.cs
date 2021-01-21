@@ -6,8 +6,8 @@ public class FieldOfView : Photon.Pun.MonoBehaviourPun
 {
 
     [Header("Field of View Settings")]
-    [SerializeField, Tooltip("Radius or max distance the 'player' can see")] private float viewRadius = 50f;
-    [SerializeField, Range(0, 360), Tooltip("Wideness of the field of view")] private float viewAngle = 90f;
+    [SerializeField, Tooltip("Radius or max distance the 'player' can see")] public float viewRadius = 50f;
+    [SerializeField, Range(0, 360), Tooltip("Wideness of the field of view")] public float viewAngle = 90f;
     
     [Header("Peripheral Vision Settings")]
     [SerializeField, Tooltip("Should the player have a peripheral vision?")] public bool hasPeripheralVision = false;

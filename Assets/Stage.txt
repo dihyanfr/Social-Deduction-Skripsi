@@ -54,6 +54,11 @@ DoorLock
 https://www.flaticon.com/free-icon/door_1380069?term=door+lock&page=1&position=61&related_id=1380069&origin=search
 Blind
 https://www.flaticon.com/free-icon/hide_748098?term=blind&page=1&position=3&related_id=748098&origin=search
+Backstab
+https://www.flaticon.com/free-icon/stab_1256745?term=stab&page=1&position=20&related_id=1256745&origin=search
+
+GrungeBackground
+https://www.freepik.com/free-photo/metal-texture-with-dust-scratches-cracks-textured-backgrounds_1235314.htm#page=1&query=grunge%20metal&position=5
 
 3D
 Antenna

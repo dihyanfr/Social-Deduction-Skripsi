@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
-
+    
     PhotonView pv;
 
     Vector3 velocity;
@@ -28,6 +28,8 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5;
     public AudioClip[] step;
     public AudioSource audioSource;
+    public Speaker speaker;
+    public AudioListener audioListener;
     public float fps = 30.0f;
 
     bool isSpawn = false;
@@ -63,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
     public Slider healthPointSlider;
     public FieldOfView fov;
     public float fieldOfViewRadius;
+    
 
     public Text code;
     public string codeTask;
@@ -70,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isDie;
     public bool alreadyDie = false;
     public Transform dieForcePos;
+    public GameObject dieTrigger;
 
     public GameObject currentTarget;
     public GameObject objectPos;
@@ -79,12 +83,25 @@ public class PlayerMovement : MonoBehaviour
     public GameObject typeIcon;
     public GameObject memoryIcon;
     public GameObject connectIcon;
+    public GameObject killIcon;
+
+    public bool isKillOnCooldown;
+    public float killCooldownTimer;
+    public float killCooldownValue;
+    public Slider killSlider;
 
     public bool canMove = false;
 
     bool healing;
 
     public GameObject arrow;
+
+    public GameObject[] hairstyle;
+    public GameObject[] shirt;
+    public Color shirtColor;
+    public GameObject[] pants;
+    public Color pantsColor;
+    public GameObject bones;
 
     private void Awake()
     {
@@ -111,6 +128,7 @@ public class PlayerMovement : MonoBehaviour
             roleReveal.gameObject.SetActive(false);
             code.gameObject.SetActive(false);
             playerUI.gameObject.SetActive(false);
+            Destroy(audioListener);
             return;
         }
 
@@ -121,6 +139,8 @@ public class PlayerMovement : MonoBehaviour
             //code.gameObject.SetActive(true);
             GetComponent<PhotonView>().RPC("seeRole", RpcTarget.All);
         }
+
+        
     }
     void Update()
     {
@@ -146,6 +166,24 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        if (isKillOnCooldown)
+        {
+            if (killCooldownValue <= killCooldownTimer)
+            {
+                killCooldownValue += Time.deltaTime;
+
+                killSlider.value = killCooldownValue / killCooldownTimer;
+
+                Debug.Log("tempLockedTime = " + killCooldownValue);
+            }
+            else
+            {
+                isKillOnCooldown = false;
+                killCooldownValue = 0;
+                killSlider.value = 0;
+            }
+        }
+
         healthPointSlider.value = healthPoint;
 
         if (isDie && !alreadyDie)
@@ -159,22 +197,28 @@ public class PlayerMovement : MonoBehaviour
             isSpawn = true;
         }
 
-        if (!isShotStand && canMove && !isDie)
+        if (!isShotStand && canMove)
         {
             if (!isBringObject)
             {
                 velocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * moveSpeed;
-                animator.SetBool("walking", true);
-                //Debug.Log(velocity.magnitude);
-                animator.SetFloat("speed", velocity.magnitude, .1f, Time.deltaTime);
+                if(animator != null)
+                {
+                    animator.SetBool("walking", true);
+                    //Debug.Log(velocity.magnitude);
+                    animator.SetFloat("speed", velocity.magnitude, .1f, Time.deltaTime);
+                }
+                
             }
             else
             {
                 velocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * (moveSpeed / 2);
-                animator.SetBool("walking", true);
-                animator.SetFloat("speed", velocity.magnitude / 2, .1f, Time.deltaTime);
+                if (animator != null)
+                {
+                    animator.SetBool("walking", true);
+                    animator.SetFloat("speed", velocity.magnitude / 2, .1f, Time.deltaTime);
+                }
             }
-            
         }
 
         //if(inventory.transform.childCount > 0)
@@ -236,7 +280,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isMastermind)
         {
-            
+            Destroy(dieTrigger);
         }
 
         if (gc.isEscape)
@@ -273,15 +317,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (!pv.IsMine)
+        {
+            return;
+        }
+
+
         if (other.gameObject.name == "DieArea" && isMastermind)
         {
-            Debug.Log(this.gameObject.name + "entering and stay die area - trigger "+ other.gameObject.name);
-            if (Input.GetKeyDown(KeyCode.E))
+            Debug.Log(this.gameObject.name + " entering and stay die area - trigger "+ other.gameObject.name);
+            killIcon.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.E) && !isKillOnCooldown)
             {
                 //other.GetComponentInParent<PlayerMovement>().getKilled();
                 //other.GetComponentInParent<PhotonView>().GetComponent<PlayerMovement>().getKilled();
                 other.GetComponentInParent<PhotonView>().RPC("getKilled", RpcTarget.AllBuffered);
                 Debug.Log("Kill");
+                isKillOnCooldown = true;
+                
+           
             }
         }
 
@@ -312,7 +366,11 @@ public class PlayerMovement : MonoBehaviour
 
         if(other.GetComponent<MiniGameController>() != null || other.GetComponent<BoxController1>() != null)
         {
-            if(other.gameObject.tag == "MemoryGame")
+            if (!pv.IsMine)
+            {
+                return;
+            }
+            if (other.gameObject.tag == "MemoryGame")
             {
                 memoryIcon.SetActive(true);
 
@@ -348,6 +406,7 @@ public class PlayerMovement : MonoBehaviour
                 connectIcon.SetActive(false);
             }
 
+            
             if (Input.GetKeyDown(KeyCode.E))
             {
                 other.GetComponent<MiniGameController>().startMiniGame();
@@ -357,15 +416,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (!pv.IsMine)
+        {
+            return;
+        }
         memoryIcon.SetActive(false);
         boxIcon.SetActive(false);
         connectIcon.SetActive(false);
         typeIcon.SetActive(false);
+        killIcon.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.name == "Hand Zombie")
+        if (!pv.IsMine)
+        {
+            return;
+        }
+        if (other.gameObject.name == "Hand Zombie")
         {
             healthPoint -= 10f;
             if(healthPoint <= 0)
@@ -376,7 +444,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(other.gameObject.tag == "Escape")
         {
-            gc.crewmateWin();
+            gc.addEscapeRPC();
         }
     }
 
@@ -418,14 +486,25 @@ public class PlayerMovement : MonoBehaviour
 
         if(currentRole == "Mastermind")
         {
-            Debug.Log("You are Mastermind");
-            //mastermindCanvas.gameObject.SetActive(true);
-            isMastermind = true;
+            if(gc.totalMastermind != 1)
+            {
+                Debug.Log("You are Mastermind");
+                isMastermind = true;
+                gc.addRole(0);
+            }
+            else
+            {
+                Debug.Log("You are Crewmate");
+                Destroy(mastermindCanvas);
+                gc.addRole(1);
+            }
+            
         }
         else
         {
             Debug.Log("You are Crewmate");
             Destroy(mastermindCanvas);
+            gc.addRole(1);
         }
 
         gameObject.name = role.totalPlayer.ToString();
@@ -442,6 +521,26 @@ public class PlayerMovement : MonoBehaviour
     public void getKilled()
     {
         isDie = true;
+        for (int i = 0; i < hairstyle.Length; i++)
+        {
+            hairstyle[i].transform.parent = null;
+        }
+        for (int i = 0; i < shirt.Length; i++)
+        {
+            shirt[i].transform.parent = null;
+        }
+        for (int i = 0; i < pants.Length; i++)
+        {
+            pants[i].transform.parent = null;
+        }
+
+        rb.isKinematic = false;
+
+        fov.viewAngle = 360;
+
+        bones.transform.parent = null;
+        rb.isKinematic = false;
+        gc.addDieRPC();
     }
 
     [PunRPC]
@@ -483,6 +582,7 @@ public class PlayerMovement : MonoBehaviour
 
         //s_animator.enabled = false;
         //s_transform.enabled = false;
+        rb.isKinematic = false;
         alreadyDie = true;
         
     }

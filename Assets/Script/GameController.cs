@@ -35,12 +35,23 @@ public class GameController : MonoBehaviour, IPunObservable
     [Header("Stage Game Settings")]
     [SerializeField] public bool startTimer;
     [SerializeField] public float time;
+    [SerializeField] public int totalPlayer;
+    [SerializeField] public int totalCrewmate;
+    [SerializeField] public int totalMastermind;
+    [SerializeField] public Text message;
+    [SerializeField] public AudioSource audioSource;
+
+    [SerializeField] public int currentEscape;
+    [SerializeField] public int currentDie;
+
+
 
     //Roles
     [Header("Roles Settings")]
     private int totalHaveRole;
     private int totalMasterMind;
     private int totalHelper;
+    
 
     //TypeTask
     [Header("Type Task Settings")]
@@ -58,8 +69,10 @@ public class GameController : MonoBehaviour, IPunObservable
     [Header("Box Task Settings")]
     [SerializeField] public int totalBox;
     [SerializeField] public GameObject[] boxGameObject;
+    [SerializeField] public GameObject[] spawnPointBox;
     [SerializeField] public GameObject collectionPoint;
     [SerializeField] public GameObject panelUIBox;
+  
 
     //ConnectTask
     [Header("Connect Task Settings")]
@@ -95,19 +108,32 @@ public class GameController : MonoBehaviour, IPunObservable
     //Scenario
     [Header("Scenario")]
     [SerializeField] public GameObject escapePoint;
-    [SerializeField] public int totalPlayer;
     [SerializeField] public GameObject panelUIEscape;
     [SerializeField] public bool isEscape;
     [SerializeField] public GameObject winCrewmateUI;
     [SerializeField] public GameObject winMastermindUI;
 
+    [SerializeField] public ZombieController zombieSpawner;
+    [SerializeField] public int totalZombieSpawn;
+    [SerializeField] public bool isHorde;
+    [SerializeField] public int hordeTime;
+    [SerializeField] public int normalTime;
+    float tempSecond = 0;
+
+    [SerializeField] public AudioClip beepSFX;
+    [SerializeField] public AudioClip hordeSFX;
+
+
 
     private void Start()
     {
+        PhotonNetwork.Instantiate(Character.name, SpawnPoint.position, Quaternion.identity);
+        
         bigDoor = GameObject.FindGameObjectsWithTag("DoorDetection");
         lightStage = GameObject.FindGameObjectsWithTag("Light");
 
         boxGameObject = GameObject.FindGameObjectsWithTag("Box");
+        spawnPointBox = GameObject.FindGameObjectsWithTag("Floor");
         memoryGameObject = GameObject.FindGameObjectsWithTag("MemoryGame");
         connectGameObject = GameObject.FindGameObjectsWithTag("ConnectGame");
         typeGameObject = GameObject.FindGameObjectsWithTag("TypeGame");
@@ -117,6 +143,25 @@ public class GameController : MonoBehaviour, IPunObservable
         connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
         typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
 
+        if (PhotonNetwork.IsMasterClient)
+        {
+            for (int i = 0; i < spawnPointBox.Length; i++)
+            {
+                int rnd = Random.Range(0, spawnPointBox.Length);
+                GameObject tempGO = spawnPointBox[rnd];
+                spawnPointBox[rnd] = spawnPointBox[i];
+                spawnPointBox[i] = tempGO;
+            }
+            
+            for (int i = 0; i < boxGameObject.Length; i++)
+            {
+                boxGameObject[i].transform.position = new Vector3(spawnPointBox[i].transform.position.x + 1.5f, spawnPointBox[i].transform.position.y, spawnPointBox[i].transform.position.z + 1.5f);  //spawnPointBox[i].transform.position;
+            }
+        }
+
+
+        
+        Debug.Log("SPAWN");
         //code1 = Random.Range(0, 9);
         //code2 = Random.Range(0, 9);
         //code3 = Random.Range(0, 9);
@@ -187,7 +232,7 @@ public class GameController : MonoBehaviour, IPunObservable
         connectText.text = totalConnect.ToString() + " / " + connectGameObject.Length;
         typeText.text = totalType.ToString() + " / " + typeGameObject.Length;
 
-        if (totalMemory == memoryGameObject.Length && totalBox == boxGameObject.Length && totalConnect == connectGameObject.Length && totalType == connectGameObject.Length)
+        if (totalMemory >= memoryGameObject.Length && totalBox >= boxGameObject.Length && totalConnect >= connectGameObject.Length && totalType >= connectGameObject.Length)
         {
             escapePoint.SetActive(true);
 
@@ -203,23 +248,67 @@ public class GameController : MonoBehaviour, IPunObservable
 
         if (startTimer)
         {
+            
+
+            if (time <= 0)
+            {
+                if (isHorde)
+                {
+                    isHorde = false;
+                    time = normalTime;
+                    setMessage("FINISH TASK");
+                    zombieSpawner.enabled = false;
+                    audioSource.Stop();
+                }
+                else
+                {
+                    isHorde = true;
+                    time = hordeTime;
+                    setMessage("HORDE INCOMING");
+                    zombieSpawner.enabled = true;
+                    audioSource.PlayDelayed(1f);
+                    audioSource.PlayOneShot(hordeSFX);
+                    audioSource.volume = 0.2f;
+                }
+            }
+
             if (time > 0)
             {
                 time -= Time.deltaTime;
-                //DisplayTime(timeRemaining);
+                
              
                 float minutes = Mathf.FloorToInt((time + 1) / 60);
                 float seconds = Mathf.FloorToInt((time + 1) % 60);
+                Debug.Log(tempSecond + " - " + seconds);
+
+                if (seconds == 11f)
+                {
+                    tempSecond = seconds;
+                }
+
+
+                if (tempSecond - seconds == 1f)
+                {
+                    if (!isHorde)
+                    {
+                        audioSource.PlayOneShot(beepSFX);
+                        audioSource.volume = 1f;
+                    }
+                    tempSecond = seconds;
+                }
+          
 
                 timer.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-            }
-            else
-            {
-                Debug.Log("Time has run out!");
-                time = 0;
+
+                
             }
         }
 
+
+        if(currentEscape == totalCrewmate)
+        {
+            GetComponent<PhotonView>().RPC("crewmateWin", RpcTarget.AllBuffered);
+        }
     }
 
     //public void InitiatePlayer()
@@ -297,6 +386,38 @@ public class GameController : MonoBehaviour, IPunObservable
     }
 
     [PunRPC]
+    public void setMessage(string msg)
+    {
+        message.text = msg;
+    }
+
+    public void addRole(int codeRole)
+    {
+        if(codeRole == 0)
+        {
+            GetComponent<PhotonView>().RPC("addMastermind", RpcTarget.AllBuffered);
+        }
+        else
+        {
+            GetComponent<PhotonView>().RPC("addCrewmate", RpcTarget.AllBuffered);
+        }
+
+    }
+
+
+    [PunRPC]
+    public void addCrewmate()
+    {
+        totalCrewmate++;
+    }
+
+    [PunRPC]
+    public void addMastermind()
+    {
+        totalMastermind++;
+    }
+
+    [PunRPC]
     public void shuffleTask()
     {
         //for (int i = 0; i < hackTask.Length; i++)
@@ -341,6 +462,28 @@ public class GameController : MonoBehaviour, IPunObservable
         }
     }
 
+    public void addEscapeRPC()
+    {
+        GetComponent<PhotonView>().RPC("addEscape", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    public void addEscape()
+    {
+        currentEscape++;
+    }
+
+    public void addDieRPC()
+    {
+        GetComponent<PhotonView>().RPC("addDie", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    public void addDie()
+    {
+        currentDie++;
+    }
+
     public void visionSabotage()
     {
         GetComponent<PhotonView>().RPC("reduceVision", RpcTarget.AllBuffered);
@@ -381,6 +524,7 @@ public class GameController : MonoBehaviour, IPunObservable
         }
     }
 
+    [PunRPC]
     public void crewmateWin()
     {
         winCrewmateUI.SetActive(true);

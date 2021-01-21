@@ -11,6 +11,8 @@ public class LobbyController : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject ConnectedUI;
 
     [SerializeField] private InputField NickName;
+    [SerializeField] private Text name;
+    [SerializeField] private Text feedback;
 
     [SerializeField] private GameObject StartButton;
     [SerializeField] private GameObject CancelButton;
@@ -23,6 +25,9 @@ public class LobbyController : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = this.Version + SceneManagerHelper.ActiveSceneBuildIndex;
 
         PhotonNetwork.LocalPlayer.NickName = NickName.text;
+        name.text = NickName.text;
+        feedback.text = "";
+
         InputUI.SetActive(false);
         ConnectedUI.SetActive(true);
     }
@@ -39,10 +44,12 @@ public class LobbyController : MonoBehaviourPunCallbacks
         StartButton.SetActive(false);
         CancelButton.SetActive(true);
         PhotonNetwork.JoinRandomRoom(); // Player masuk room secara random
+        feedback.text = "Wait for connection";
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message) // Jika gagal masuk room, bagian ini dijalankan
     {
+        feedback.text = "No room found. Creating new Room";
         CreateRoom();
     }
 
@@ -60,8 +67,10 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     public void LeaveRoom()
     {
+        feedback.text = "Cancelling";
         StartButton.SetActive(true);
         CancelButton.SetActive(false);
         PhotonNetwork.LeaveRoom();
     }
+    //test
 }

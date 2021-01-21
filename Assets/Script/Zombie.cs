@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour
 {
+    public ZombieController zombieController;
     public float wanderRadius;
     public float wanderTimer;
     public float wanderSpeed;
@@ -48,6 +49,7 @@ public class Zombie : MonoBehaviour
 
         rb_ragdoll = GetComponentsInChildren<Rigidbody>();
         cl_ragdoll = GetComponentsInChildren<Collider>();
+        zombieController = FindObjectOfType<ZombieController>();
 
         for (int x = 0; x < rb_ragdoll.Length; x++)
         {
@@ -68,7 +70,7 @@ public class Zombie : MonoBehaviour
 
         if (!agent.isOnNavMesh)
         {
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
     }
 
@@ -113,6 +115,7 @@ public class Zombie : MonoBehaviour
             agent.speed = 0f;
             die();
             Destroy(this.gameObject, 3f);
+            
         }
 
     }
@@ -198,11 +201,19 @@ public class Zombie : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.tag == "Bullet")
+        this.GetComponent<NavMeshAgent>().enabled = true;
+        if (collision.transform.tag == "Bullet")
         {
             Debug.Log("HIT");
             hp -= Random.Range(50f, 105f);
 
+        }
+
+        if (collision.transform.tag == "ZC")
+        {
+            Destroy(this.gameObject);
+            zombieController.temptotalZombie--;
+            zombieController.listZombie.RemoveAt(zombieController.listZombie.Count - 1);
         }
     }
 
@@ -214,6 +225,7 @@ public class Zombie : MonoBehaviour
             hp -= Random.Range(50f, 105f);
             am.SetTrigger("damage");
         }
+        
     }
 
     public void die()
