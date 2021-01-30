@@ -2408,7 +2408,7 @@ MonoBehaviour:
   feedback: {fileID: 7348301439532825238}
   StartButton: {fileID: 7348301439764355841}
   CancelButton: {fileID: 7348301438457578933}
-  RoomSize: 8
+  RoomSize: 2
   Version: 1
 --- !u!114 &7348301438518492991
 MonoBehaviour:

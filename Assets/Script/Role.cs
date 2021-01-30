@@ -37,14 +37,14 @@ public class Role : MonoBehaviour, IPunObservable
             {
                 //totalCrewmate++;
                 GetComponent<PhotonView>().RPC("addCrewmate", RpcTarget.AllBuffered);
-                return "Crewmate";
+                return "Colleague";
             }
         }
         else
         {
             //totalCrewmate++;
             GetComponent<PhotonView>().RPC("addCrewmate", RpcTarget.AllBuffered);
-            return "Crewmate";
+            return "Colleague";
         }
     }
 

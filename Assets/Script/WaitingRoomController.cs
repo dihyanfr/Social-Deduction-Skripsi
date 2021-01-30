@@ -57,7 +57,7 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
         playerCount = PhotonNetwork.PlayerList.Length;
         roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
 
-        playerCountText.text = playerCount + " / " + roomSize;
+        playerCountText.text = playerCount + " - " + roomSize;
 
         if(playerCount == roomSize) //Jika room penuh maka langsung start
         {

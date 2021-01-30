@@ -2475,7 +2475,7 @@ PrefabInstance:
     - target: {fileID: 1976753347727904256, guid: bbc8c0458c5746640b5f71d56f347777,
         type: 3}
       propertyPath: minPlayer
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1976753347727904256, guid: bbc8c0458c5746640b5f71d56f347777,
         type: 3}

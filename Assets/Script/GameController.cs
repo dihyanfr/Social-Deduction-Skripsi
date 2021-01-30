@@ -305,10 +305,16 @@ public class GameController : MonoBehaviour, IPunObservable
         }
 
 
-        if(currentEscape == totalCrewmate)
+        if(currentEscape == totalCrewmate && isEscape)
         {
             GetComponent<PhotonView>().RPC("crewmateWin", RpcTarget.AllBuffered);
         }
+
+        if(currentDie != 0)
+        {
+            currentDie = (totalCrewmate + totalMastermind) / currentDie;
+        }
+        
     }
 
     //public void InitiatePlayer()
@@ -482,6 +488,10 @@ public class GameController : MonoBehaviour, IPunObservable
     public void addDie()
     {
         currentDie++;
+        if (currentDie == totalCrewmate)
+        {
+            GetComponent<PhotonView>().RPC("mastermindWin", RpcTarget.AllBuffered);
+        }
     }
 
     public void visionSabotage()
@@ -528,6 +538,12 @@ public class GameController : MonoBehaviour, IPunObservable
     public void crewmateWin()
     {
         winCrewmateUI.SetActive(true);
+    }
+
+    [PunRPC]
+    public void mastermindWin()
+    {
+        winMastermindUI.SetActive(true);
     }
 
     public void exitGame()
