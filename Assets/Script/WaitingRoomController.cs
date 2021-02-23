@@ -22,7 +22,7 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
     //UI
     [SerializeField] private Text playerCountText;
     [SerializeField] private Text timerText;
-
+    [SerializeField] private Text roomID;
     private bool readyCountdown;
     private bool readyStart;
     private bool startGame;
@@ -48,7 +48,7 @@ public class WaitingRoomController : MonoBehaviourPunCallbacks
         timerToStartGame = maxWaitTime;
 
         PlayerCountUpdate();
-
+        roomID.text = PhotonNetwork.CurrentRoom.Name;
         PhotonNetwork.Instantiate(playerAvatar.name, new Vector3(spawnPosition[playerCount - 1].position.x, spawnPosition[playerCount - 1].position.y, spawnPosition[playerCount - 1].position.z), Quaternion.identity);
     }
 

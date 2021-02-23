@@ -11,20 +11,35 @@ public class LobbyController : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject ConnectedUI;
 
     [SerializeField] private InputField NickName;
+    
     [SerializeField] private Text name;
     [SerializeField] private Text feedback;
 
     [SerializeField] private GameObject StartButton;
     [SerializeField] private GameObject CancelButton;
+    [SerializeField] private InputField roomid;
     [SerializeField] private byte RoomSize;
     [SerializeField] private string Version;
+    [SerializeField] private GameObject button;
+
+    private void Start()
+    {
+
+    }
+
+    private void Update()
+    {
+        if (!PhotonNetwork.IsConnected)
+        {
+            feedback.text = "Please wait...";
+            PhotonNetwork.ConnectUsingSettings(); // Player masuk ke koneksi game
+            PhotonNetwork.GameVersion = this.Version + SceneManagerHelper.ActiveSceneBuildIndex;
+        }
+    }
 
     public void SetNickname()
     {
-        PhotonNetwork.ConnectUsingSettings(); // Player masuk ke koneksi game
-        PhotonNetwork.GameVersion = this.Version + SceneManagerHelper.ActiveSceneBuildIndex;
-
-        PhotonNetwork.LocalPlayer.NickName = NickName.text;
+        
         name.text = NickName.text;
         feedback.text = "";
 
@@ -36,38 +51,60 @@ public class LobbyController : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.AutomaticallySyncScene = true; // Sinkronisasi semua player yang join
         StartButton.SetActive(true);
-        PhotonNetwork.JoinRandomRoom();
+        feedback.text = "Connected to server. Choose room";
+        //PhotonNetwork.JoinRandomRoom();
     }
 
     public void JoinRoom()
     {
-        StartButton.SetActive(false);
-        CancelButton.SetActive(true);
+        PhotonNetwork.ConnectUsingSettings(); // Player masuk ke koneksi game
+        PhotonNetwork.GameVersion = this.Version + SceneManagerHelper.ActiveSceneBuildIndex;
+
+        PhotonNetwork.LocalPlayer.NickName = NickName.text;
+
         PhotonNetwork.JoinRandomRoom(); // Player masuk room secara random
         feedback.text = "Wait for connection";
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message) // Jika gagal masuk room, bagian ini dijalankan
     {
-        feedback.text = "No room found. Creating new Room";
-        CreateRoom();
+        feedback.text = "No room found";
+        //CreateRoom();
     }
 
     public void CreateRoom()
     {
+        feedback.text = "Creating Room";
         int RoomNumber = Random.Range(0, 9999);
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = RoomSize };
         PhotonNetwork.CreateRoom(RoomNumber.ToString(), roomOps);
+
+
+        
+
+        PhotonNetwork.LocalPlayer.NickName = NickName.text;
+        PhotonNetwork.JoinRoom(RoomNumber.ToString());
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        CreateRoom();
+        //CreateRoom();
+    }
+
+    public void findRoom()
+    {
+        feedback.text = "Finding Room";
+        PhotonNetwork.JoinRoom(roomid.text);
+        PhotonNetwork.ConnectUsingSettings(); // Player masuk ke koneksi game
+        PhotonNetwork.GameVersion = this.Version + SceneManagerHelper.ActiveSceneBuildIndex;
+
+        PhotonNetwork.LocalPlayer.NickName = NickName.text;
     }
 
     public void LeaveRoom()
     {
         feedback.text = "Cancelling";
+        button.SetActive(false);
         StartButton.SetActive(true);
         CancelButton.SetActive(false);
         PhotonNetwork.LeaveRoom();

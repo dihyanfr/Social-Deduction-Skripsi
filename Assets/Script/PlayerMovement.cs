@@ -103,6 +103,8 @@ public class PlayerMovement : MonoBehaviour
     public Color pantsColor;
     public GameObject bones;
 
+    public GameObject pause;
+
     private void Awake()
     {
         this.transform.rotation = Quaternion.identity;
@@ -278,6 +280,18 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if (pause.activeSelf)
+            {
+                pause.SetActive(false);
+            }
+            else
+            {
+                pause.SetActive(true);
+            }
+        }
+
         if (isMastermind)
         {
             Destroy(dieTrigger);
@@ -315,13 +329,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void exitGame()
+    {
+        Application.Quit();
+    }
+
+
     private void OnTriggerStay(Collider other)
     {
-        if (!pv.IsMine)
-        {
-            return;
-        }
-
+     
 
         if (other.gameObject.name == "DieArea" && isMastermind)
         {

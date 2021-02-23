@@ -2481,8 +2481,6 @@ MonoBehaviour:
   sharedStateNames:
   - Walk
   - Base Layer.Walk
-  - Idle
-  - Base Layer.Idle
   - Jump
   - Base Layer.Jump
   - Left Turn 90
@@ -2491,14 +2489,21 @@ MonoBehaviour:
   - Base Layer.idle with pistol
   - pistol shooting with recoil
   - Base Layer.pistol shooting with recoil
+  - HumanoidWalk
+  - Base Layer.HumanoidWalk
+  - Walk 0
+  - Base Layer.Walk 0
+  - Bring
+  - Base Layer.Bring
   - UpperBodyRun
   - SecondLayer.UpperBodyRun
+  - Idle
   - SecondLayer.Idle
   - Blendy
   - SecondLayer.Blendy
   sharedTransNames: []
   sharedTriggIndexes: 1606b3a7234d916890691ff02c8defb7de66950d
-  sharedStateIndexes: 6bd5a32d398fdc042b1a167c7940695528a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c7268b22ee8aaf8142e36508444a81669c9a8ea0ca0
+  sharedStateIndexes: 6bd5a32d398fdc0428a981077af3fe2e631b712340ab7285a4b102e57a1a43865ffa40e9d8785c721ae8ff5a3958fcfc65bf3482261107815ed6894adc99c5cf68b22ee8aaf8142e2b1a167c36508444a81669c9a8ea0ca0
   animator: {fileID: 5437029026145630784}
   autoRootMotion: 1
   syncPassThrus: 1
@@ -3064,9 +3069,14 @@ MonoBehaviour:
   rb_ragdoll: []
   cl_ragdoll: []
   moveSpeed: 5
+  step: []
+  audioSource: {fileID: 0}
+  speaker: {fileID: 0}
+  audioListener: {fileID: 0}
   fps: 30
   gun: {fileID: 3975151820501270152}
   bullet: {fileID: 7116359900541625114, guid: 02c6be86d36390348919a2613d80f4f3, type: 3}
+  gunshotSound: {fileID: 0}
   inventory: {fileID: 0}
   gunPos: {fileID: 7783124035691371101}
   lr: {fileID: 5260913841595964570}
@@ -3077,13 +3087,40 @@ MonoBehaviour:
   roleText: {fileID: 5577521180884668187}
   isMastermind: 0
   roleReveal: {fileID: 8608324515627663786}
+  recorder: {fileID: 0}
   mastermindCanvas: {fileID: 0}
+  playerUI: {fileID: 0}
+  healthPoint: 0
+  healthPointSlider: {fileID: 0}
+  fov: {fileID: 0}
+  fieldOfViewRadius: 0
   code: {fileID: 284626245449442075}
+  codeTask: 
   gc: {fileID: 0}
   isDie: 0
   alreadyDie: 0
   dieForcePos: {fileID: 8856277386917464301}
+  dieTrigger: {fileID: 0}
   currentTarget: {fileID: 0}
+  objectPos: {fileID: 0}
+  currentBringObject: {fileID: 0}
+  boxIcon: {fileID: 0}
+  typeIcon: {fileID: 0}
+  memoryIcon: {fileID: 0}
+  connectIcon: {fileID: 0}
+  killIcon: {fileID: 0}
+  isKillOnCooldown: 0
+  killCooldownTimer: 0
+  killCooldownValue: 0
+  killSlider: {fileID: 0}
+  canMove: 0
+  arrow: {fileID: 0}
+  hairstyle: []
+  shirt: []
+  shirtColor: {r: 0, g: 0, b: 0, a: 0}
+  pants: []
+  pantsColor: {r: 0, g: 0, b: 0, a: 0}
+  bones: {fileID: 0}
 --- !u!114 &7783124035699429176
 MonoBehaviour:
   m_ObjectHideFlags: 0

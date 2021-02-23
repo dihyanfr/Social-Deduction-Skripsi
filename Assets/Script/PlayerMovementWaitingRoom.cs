@@ -15,7 +15,7 @@ public class PlayerMovementWaitingRoom : MonoBehaviour
     [SerializeField] public Rigidbody rb;
     [SerializeField] public PhotonView pv;
     [SerializeField] public Recorder recorder;
-
+    [SerializeField] public GameObject pause;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +54,17 @@ public class PlayerMovementWaitingRoom : MonoBehaviour
             recorder.TransmitEnabled = false;
 
         }
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if (pause.activeSelf)
+            {
+                pause.SetActive(false);
+            }
+            else
+            {
+                pause.SetActive(true);
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -72,4 +83,10 @@ public class PlayerMovementWaitingRoom : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * 5f);
         }
     }
+
+    public void exitGame()
+    {
+        Application.Quit();
+    }
+
 }
